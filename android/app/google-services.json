@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "595152230935",
+    "project_id": "my-college-guide-auth",
+    "storage_bucket": "my-college-guide-auth.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:595152230935:android:272d441b25785683c7da52",
+        "android_client_info": {
+          "package_name": "com.example.project_one"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "595152230935-i4ronjn41g6fkfanqtb47g3mcj4jlf73.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_one",
+            "certificate_hash": "baac6e2b2217d82cb09e6d3a32a6ddba11d75077"
+          }
+        },
+        {
+          "client_id": "595152230935-id62fqbta78coh80ndn3pchfh9tt6dur.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASFvE0e7dxFQLxMzPwNQyCrMyxFw_VyXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "595152230935-id62fqbta78coh80ndn3pchfh9tt6dur.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
