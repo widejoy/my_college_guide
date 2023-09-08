@@ -1,19 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_one/providers/usernameprovider.dart';
 import 'package:project_one/screens/authentication/reset_password.dart';
 import 'package:project_one/screens/authentication/signup_screen.dart';
 import 'package:project_one/screens/authentication/widgets/form.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SignIn extends StatefulWidget {
+class SignIn extends ConsumerStatefulWidget {
   const SignIn({super.key});
 
   @override
-  State<SignIn> createState() => _SignInState();
+  ConsumerState<SignIn> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignInState extends ConsumerState<SignIn> {
   Future<String?> getUsername() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -22,7 +25,10 @@ class _SignInState extends State<SignIn> {
           .doc(user.uid)
           .get();
       if (userDoc.exists) {
-        return (userDoc.data() as Map<String, dynamic>)['username'] as String?;
+        final String username =
+            (userDoc.data() as Map<String, dynamic>)['username'];
+        ref.read(usernameprov.notifier).getuser(username);
+        return username;
       }
     }
     return null;
@@ -174,13 +180,13 @@ class _SignInState extends State<SignIn> {
                             .signInWithEmailAndPassword(
                                 email: _email.text, password: _password.text)
                             .then((value) async {
-                          String? username = await getUsername();
-
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setBool('userLoggedIn', true);
                           // ignore: use_build_context_synchronously
                           Navigator.of(context).pushReplacement(
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  HomeScreen(username: username),
+                              builder: (context) => const HomeScreen(),
                             ),
                           );
                         }).onError(

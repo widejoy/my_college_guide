@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:project_one/providers/usernameprovider.dart';
 import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.username});
-
-  final String? username;
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final username = ref.watch(usernameprov);
+
     return Scaffold(
       drawer: DrawerCustom(username: username),
       appBar: AppBar(
