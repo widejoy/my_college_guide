@@ -22,7 +22,7 @@ class DrawerCustom extends ConsumerWidget {
             .get();
         final String username =
             (userDoc.data() as Map<String, dynamic>)['username'];
-        ref.read(usernameprov.notifier).getuser(username);
+        ref.read(usernameprov.notifier).getuser(username, user.uid);
 
         if (userDoc.exists) {
           return (userDoc.data() as Map<String, dynamic>)['username'];

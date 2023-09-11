@@ -4,8 +4,8 @@ TextField customField(TextEditingController cont, String text) {
   return TextField(
     autocorrect: true,
     controller: cont,
-    style: TextStyle(
-      color: Colors.black.withOpacity(0.9),
+    style: const TextStyle(
+      color: Colors.purpleAccent,
       fontSize: 16.0,
     ),
     decoration: InputDecoration(

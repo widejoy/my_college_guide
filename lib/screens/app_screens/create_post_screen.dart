@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/Widgets/appbar_custom.dart';
 import 'package:project_one/screens/app_screens/Widgets/custom_field.dart';
@@ -11,7 +13,7 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   TextEditingController subname = TextEditingController();
-  TextEditingController userid = TextEditingController();
+  TextEditingController year = TextEditingController();
   String collegename =
       "CUSAT - Cochin University Of Science And Technology"; // Default value
 
@@ -49,7 +51,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           const SizedBox(
             height: 20,
           ),
-          customField(userid, "Year"),
+          customField(year, "Year"),
           const SizedBox(
             height: 20,
           ),
@@ -79,7 +81,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             },
           ),
           const SizedBox(
-            height: 65,
+            height: 40,
           ),
           Center(
             child: OutlinedButton(
@@ -88,7 +90,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   Size(400, 12),
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                final user = FirebaseAuth.instance.currentUser;
+
+                Map<String, dynamic> dataToAdd = {
+                  "Subject name": subname.text,
+                  "year": year.text,
+                  "College Name": collegename,
+                  "votes": 0,
+                  "user id": user?.uid
+                };
+
+                FirebaseFirestore.instance
+                    .collection("Question Papers")
+                    .add(dataToAdd)
+                    .then((_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Succesfully added data"),
+                    ),
+                  );
+                }).catchError((error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Error:$error"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                });
+              },
               child: const Text("Submit"),
             ),
           )
