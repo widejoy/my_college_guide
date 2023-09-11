@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^4.9.1
   shared_preferences: ^2.0.15
   flutter_riverpod: ^2.4.0
+  flutter_cached_pdfview: ^0.4.2
 
 dev_dependencies:
   flutter_test:

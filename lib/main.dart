@@ -47,9 +47,11 @@ class _MyAppState extends ConsumerState<MyApp> {
     bool? value = prefs.getBool('userLoggedIn');
 
     if (value != null) {
-      setState(() {
-        userIsLoggedIn = value;
-      });
+      setState(
+        () {
+          userIsLoggedIn = value;
+        },
+      );
     }
   }
 }

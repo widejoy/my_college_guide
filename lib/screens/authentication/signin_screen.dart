@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:project_one/providers/usernameprovider.dart';
 import 'package:project_one/screens/authentication/reset_password.dart';
 import 'package:project_one/screens/authentication/signup_screen.dart';
 import 'package:project_one/screens/authentication/widgets/form.dart';
@@ -25,10 +24,7 @@ class _SignInState extends ConsumerState<SignIn> {
           .doc(user.uid)
           .get();
       if (userDoc.exists) {
-        final String username =
-            (userDoc.data() as Map<String, dynamic>)['username'];
-        ref.read(usernameprov.notifier).getuser(username);
-        return username;
+        return (userDoc.data() as Map<String, dynamic>)['username'];
       }
     }
     return null;
