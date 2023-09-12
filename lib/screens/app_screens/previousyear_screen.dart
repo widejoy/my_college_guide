@@ -81,6 +81,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
             userName: "rogerantony",
             votes: 2,
             year: 2012,
+            stream: "btech cs",
           )
         ],
       ),

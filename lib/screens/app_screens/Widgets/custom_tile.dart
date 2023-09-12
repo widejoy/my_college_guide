@@ -7,6 +7,7 @@ class CustomListTile extends StatefulWidget {
   final String userName;
   final int votes;
   final int year;
+  final String stream;
 
   const CustomListTile({
     super.key,
@@ -15,6 +16,7 @@ class CustomListTile extends StatefulWidget {
     required this.userName,
     required this.votes,
     required this.year,
+    required this.stream,
   });
 
   @override
@@ -80,6 +82,7 @@ class _CustomListTileState extends State<CustomListTile> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      visualDensity: VisualDensity.comfortable,
       leading: const Icon(Icons.sticky_note_2),
       title: Text('College: ${widget.collegeName}'),
       subtitle: Column(
@@ -88,6 +91,7 @@ class _CustomListTileState extends State<CustomListTile> {
           Text('Subject: ${widget.subjectName}'),
           Text('Uploaded by: ${widget.userName}'),
           Text('Year: ${widget.year}'),
+          Text('Stream: ${widget.stream}')
         ],
       ),
       trailing: Column(
@@ -113,7 +117,7 @@ class _CustomListTileState extends State<CustomListTile> {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => Viewpdf(),
+            builder: (context) => const Viewpdf(),
           ),
         );
       },

@@ -3,6 +3,7 @@ import 'package:project_one/screens/app_screens/Widgets/appbar_custom.dart';
 import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
 import 'package:project_one/screens/app_screens/Widgets/stylised_container.dart';
 import 'package:project_one/screens/app_screens/create_post_screen.dart';
+import 'package:project_one/screens/app_screens/notes_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -21,11 +22,22 @@ class HomeScreen extends StatelessWidget {
             ),
             StylishCard(text: "My favourites", fun: () {}),
             StylishCard(
-                text: "Create Post",
+                text: "upload a question paper",
                 fun: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => const CreatePostScreen(),
+                    ),
+                  );
+                }),
+            StylishCard(
+                text: "upload your notes",
+                fun: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const NotesScreen();
+                      },
                     ),
                   );
                 })
