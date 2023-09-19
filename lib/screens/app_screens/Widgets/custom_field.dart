@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
-TextField customField(TextEditingController cont, String text) {
+TextField customField(TextEditingController cont, String text,
+    {bool isnum = false}) {
   return TextField(
+    keyboardType: isnum ? const TextInputType.numberWithOptions() : null,
     autocorrect: true,
     controller: cont,
     style: const TextStyle(

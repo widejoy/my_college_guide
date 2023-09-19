@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project_one/screens/app_screens/Widgets/custom_field.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final bool isquestionpaper;
@@ -22,6 +26,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? yearError;
   String? topicError;
   String? streamError;
+  late PlatformFile file;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +86,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             customField(subname, "Subject Name"),
             const SizedBox(height: 16),
             widget.isquestionpaper
-                ? customField(year, "Year")
+                ? customField(year, "Year", isnum: true)
                 : customField(topic, "Topic"),
             const SizedBox(height: 16),
             customField(stream, "Stream"),
@@ -126,11 +131,57 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles(
+                      dialogTitle: 'Pick Your File',
+                      type: FileType.custom,
+                      allowedExtensions: ["pdf"],
+                    );
+
+                    if (result != null) {
+                      file = result.files.first;
+                    }
+                  },
+                  icon: const Icon(
+                    size: 48,
+                    Icons.upload_file_outlined,
+                  ),
+                  style: const ButtonStyle(
+                    enableFeedback: true,
+                    elevation: MaterialStatePropertyAll(24),
+                    surfaceTintColor: MaterialStatePropertyAll(Colors.grey),
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                const Text(
+                  'Upload Your File',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.purple,
+                    fontFamily: 'Montserrat',
+                    letterSpacing: 0.5,
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 16,
+            ),
             Center(
               child: OutlinedButton(
-                style: const ButtonStyle(
-                  fixedSize: MaterialStatePropertyAll(
+                style: ButtonStyle(
+                  enableFeedback: true,
+                  backgroundColor:
+                      MaterialStatePropertyAll(Colors.purple.withOpacity(0.1)),
+                  fixedSize: const MaterialStatePropertyAll(
                     Size(400, 12),
                   ),
                 ),
@@ -165,11 +216,33 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               .collection("Question Papers")
                               .add(dataToAdd)
                               .then((_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Succesfully added data"),
-                              ),
-                            );
+                            String documentId = _.id;
+                            final filePath = 'Question papers/$documentId.pdf';
+                            FirebaseStorage.instance
+                                .ref()
+                                .child(filePath)
+                                .putFile(
+                                  File(file.path!),
+                                )
+                                .then(
+                                  (p0) => ScaffoldMessenger.of(context)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Succesfully added data"),
+                                    ),
+                                  ),
+                                )
+                                .onError(
+                                  (error, stackTrace) =>
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: $error"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  ),
+                                );
+
                             Navigator.of(context).pop();
                           }).catchError((error) {
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -183,7 +256,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           Map<String, dynamic> dataToAdd = {
                             "College Name": collegename,
                             "votes": 0,
-                            "Subject Name": subname,
+                            "Subject Name": subname.text,
                             "user id": user?.uid,
                             "Stream": stream.text,
                             "Topic Name": topic.text
@@ -193,11 +266,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               .add(dataToAdd)
                               .then(
                             (_) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Succesfully added data"),
-                                ),
-                              );
+                              String documentId = _.id;
+                              final filePath = 'notes/$documentId.pdf';
+                              FirebaseStorage.instance
+                                  .ref()
+                                  .child(filePath)
+                                  .putFile(
+                                    File(file.path!),
+                                  )
+                                  .then(
+                                    (p0) => ScaffoldMessenger.of(context)
+                                        .showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Succesfully added data"),
+                                      ),
+                                    ),
+                                  );
+
                               Navigator.of(context).pop();
                             },
                           ).catchError(
@@ -212,8 +297,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           );
                         }
                       } else {
-                        // Display error messages or perform any other action when the form data is not valid
-
                         if (subnameError != null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
