@@ -38,6 +38,35 @@ class _CustomListTileState extends State<CustomListTile> {
   bool isDown = false;
   int _voteCount = 0;
   bool isFavorited = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkUserVotesAndFavorites();
+  }
+
+  void _checkUserVotesAndFavorites() {
+    final user = FirebaseAuth.instance.currentUser;
+    final userid = user?.uid;
+
+    if (userid != null) {
+      final userReference =
+          FirebaseFirestore.instance.collection('users').doc(userid);
+
+      userReference.get().then((doc) {
+        final upvotedPosts = doc['upvoted'] ?? [];
+        final downvotedPosts = doc['downvoted'] ?? [];
+        final favoritedPosts = doc['favs'] ?? [];
+
+        setState(() {
+          isUp = upvotedPosts.contains(widget.id);
+          isDown = downvotedPosts.contains(widget.id);
+          isFavorited = favoritedPosts.contains(widget.id);
+        });
+      });
+    }
+  }
+
   void _updateVotes() {
     final collectionName = widget.isQuestionpaper ? 'Question Papers' : 'Notes';
     final docRef =
@@ -64,14 +93,12 @@ class _CustomListTileState extends State<CustomListTile> {
     final userid = user?.uid;
 
     if (isUp) {
-      // User is undoing their upvote
       setState(() {
         up = const Icon(Icons.thumb_up_alt_outlined);
         _voteCount--;
         isUp = false;
       });
 
-      // Remove the item ID from the "upvoted" array
       final userReference =
           FirebaseFirestore.instance.collection('users').doc(userid);
       userReference
@@ -81,9 +108,7 @@ class _CustomListTileState extends State<CustomListTile> {
           .then((_) {})
           .catchError((error) {});
     } else {
-      // User is upvoting
       if (isDown) {
-        // User was downvoting, remove from downvoted
         setState(() {
           down = const Icon(Icons.thumb_down_alt_outlined);
           _voteCount++;
@@ -109,7 +134,6 @@ class _CustomListTileState extends State<CustomListTile> {
         isUp = true;
       });
 
-      // Add the item ID to the "upvoted" array
       final userReference =
           FirebaseFirestore.instance.collection('users').doc(userid);
       userReference
@@ -123,6 +147,7 @@ class _CustomListTileState extends State<CustomListTile> {
     _updateVotes();
   }
 
+  // Function to handle downvoting
   void _downvote() {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;
@@ -145,9 +170,7 @@ class _CustomListTileState extends State<CustomListTile> {
           .then((_) {})
           .catchError((error) {});
     } else {
-      // User is downvoting
       if (isUp) {
-        // User was upvoting, remove from upvoted
         setState(() {
           up = const Icon(Icons.thumb_up_alt_outlined);
           _voteCount--;
@@ -186,6 +209,7 @@ class _CustomListTileState extends State<CustomListTile> {
     _updateVotes();
   }
 
+  // Function to handle favoriting
   void _toggleFavorite() {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;
