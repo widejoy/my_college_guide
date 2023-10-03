@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_one/providers/usernameprovider.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
+import 'package:project_one/screens/app_screens/notes_screen.dart';
 import 'package:project_one/screens/app_screens/previousyear_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,7 +103,11 @@ class DrawerCustom extends ConsumerWidget {
                     leading: const Icon(Icons.notes_sharp),
                     title: const Text('Notes'),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const NotesScreen(),
+                        ),
+                      );
                     },
                   ),
                   ListTile(

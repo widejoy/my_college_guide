@@ -65,6 +65,30 @@ class _CustomListTileState extends State<CustomListTile> {
         });
       });
     }
+    if (isUp) {
+      setState(() {
+        up = const Icon(
+          Icons.thumb_up,
+          color: Colors.blue,
+        );
+      });
+    } else {
+      setState(() {
+        up = const Icon(Icons.thumb_up_alt_outlined);
+      });
+    }
+    if (isDown) {
+      setState(() {
+        down = const Icon(
+          Icons.thumb_down,
+          color: Colors.red,
+        );
+      });
+    } else {
+      setState(() {
+        down = const Icon(Icons.thumb_down_alt_outlined);
+      });
+    }
   }
 
   void _updateVotes() {
@@ -106,7 +130,9 @@ class _CustomListTileState extends State<CustomListTile> {
             'upvoted': FieldValue.arrayRemove([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            print('Error removing upvote: $error');
+          });
     } else {
       if (isDown) {
         setState(() {
@@ -122,7 +148,9 @@ class _CustomListTileState extends State<CustomListTile> {
               'downvoted': FieldValue.arrayRemove([widget.id]),
             })
             .then((_) {})
-            .catchError((error) {});
+            .catchError((error) {
+              print('Error removing downvote: $error');
+            });
       }
 
       setState(() {
@@ -141,26 +169,25 @@ class _CustomListTileState extends State<CustomListTile> {
             'upvoted': FieldValue.arrayUnion([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            print('Error adding upvote: $error');
+          });
     }
 
     _updateVotes();
   }
 
-  // Function to handle downvoting
   void _downvote() {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;
 
     if (isDown) {
-      // User is undoing their downvote
       setState(() {
         down = const Icon(Icons.thumb_down_alt_outlined);
         _voteCount++;
         isDown = false;
       });
 
-      // Remove the item ID from the "downvoted" array
       final userReference =
           FirebaseFirestore.instance.collection('users').doc(userid);
       userReference
@@ -168,7 +195,9 @@ class _CustomListTileState extends State<CustomListTile> {
             'downvoted': FieldValue.arrayRemove([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            print('Error removing downvote: $error');
+          });
     } else {
       if (isUp) {
         setState(() {
@@ -184,7 +213,9 @@ class _CustomListTileState extends State<CustomListTile> {
               'upvoted': FieldValue.arrayRemove([widget.id]),
             })
             .then((_) {})
-            .catchError((error) {});
+            .catchError((error) {
+              print('Error removing upvote: $error');
+            });
       }
 
       setState(() {
@@ -203,13 +234,14 @@ class _CustomListTileState extends State<CustomListTile> {
             'downvoted': FieldValue.arrayUnion([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            print('Error adding downvote: $error');
+          });
     }
 
     _updateVotes();
   }
 
-  // Function to handle favoriting
   void _toggleFavorite() {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;

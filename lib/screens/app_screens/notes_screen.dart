@@ -5,14 +5,14 @@ import 'package:project_one/screens/app_screens/Widgets/custom_tile.dart';
 import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 
-class PreviousYearScreen extends StatefulWidget {
-  const PreviousYearScreen({super.key});
+class NotesScreen extends StatefulWidget {
+  const NotesScreen({super.key});
 
   @override
-  State<PreviousYearScreen> createState() => _PreviousYearScreenState();
+  State<NotesScreen> createState() => _NotesScreen();
 }
 
-class _PreviousYearScreenState extends State<PreviousYearScreen> {
+class _NotesScreen extends State<NotesScreen> {
   String? selectedCollege;
   bool collegeDropdownEnabled = true;
   var searchDatabase = [];
@@ -30,7 +30,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
 
   Future<List<DocumentSnapshot>> performFuzzySearch(String searchText) async {
     final querySnapshot =
-        await FirebaseFirestore.instance.collection('Question Papers').get();
+        await FirebaseFirestore.instance.collection('Notes').get();
 
     final searchResults = querySnapshot.docs.where((doc) {
       final List<String> keywords = List<String>.from(doc["Keywords"] ?? []);
@@ -40,7 +40,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
         choices: keywords,
         cutoff: 10,
       );
-      if (result.score >= 95) {
+      if (result.score >= 80) {
         return true;
       }
       return false;
@@ -67,7 +67,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
     return Scaffold(
       drawer: const DrawerCustom(),
       appBar: const CustomAppBar(
-        title: 'Previous Year Question Papers',
+        title: 'Notes',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -87,7 +87,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                   decorationColor: Colors.amber,
                 ),
               ),
-              hintText: 'Search by College/Subject/Year/Stream',
+              hintText: 'Search by College/Subject/Topic/Stream',
               backgroundColor: const MaterialStatePropertyAll(
                 Color.fromARGB(255, 190, 216, 237),
               ),
@@ -131,16 +131,23 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                 itemCount: searchDatabase.length,
                 itemBuilder: (context, index) {
                   final doc = searchDatabase[index].data();
-                  return CustomListTile(
-                    isQuestionpaper: true,
-                    isVerified: doc["Verified"],
-                    id: id,
-                    collegeName: doc['College Name'],
-                    subjectName: doc['Subject Name'],
-                    userName: doc['User Id'],
-                    votes: doc['Votes'],
-                    year: doc['Year'],
-                    stream: doc['Stream'],
+                  return Column(
+                    children: [
+                      CustomListTile(
+                        isQuestionpaper: false,
+                        isVerified: doc["Verified"],
+                        id: id,
+                        collegeName: doc['College Name'],
+                        subjectName: doc['Subject Name'],
+                        userName: doc['User Id'],
+                        votes: doc['Votes'],
+                        year: doc['Topic Name'],
+                        stream: doc['Stream'],
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      )
+                    ],
                   );
                 },
               ),

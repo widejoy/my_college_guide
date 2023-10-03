@@ -25,6 +25,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? yearError;
   String? topicError;
   String? streamError;
+  bool _isSubmitting = false;
+
   late PlatformFile file;
   bool pdf = false;
   List<String> keywords = [];
@@ -199,207 +201,232 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               height: 16,
             ),
             Center(
-              child: OutlinedButton(
-                style: ButtonStyle(
-                  enableFeedback: true,
-                  backgroundColor:
-                      MaterialStatePropertyAll(Colors.purple.withOpacity(0.1)),
-                  fixedSize: const MaterialStatePropertyAll(
-                    Size(400, 12),
-                  ),
-                ),
-                onPressed: () {
-                  keywords.addAll(
-                    subname.text.toLowerCase().split(' ') +
-                        stream.text.toLowerCase().split(' ') +
-                        collegename.toLowerCase().split(' '),
-                  );
-                  if (widget.isquestionpaper) {
-                    keywords.add(year.text);
-                  } else {
-                    keywords.addAll(
-                      topic.text.toLowerCase().split(' '),
-                    );
-                  }
+              child: _isSubmitting
+                  ? const CircularProgressIndicator()
+                  : OutlinedButton(
+                      style: ButtonStyle(
+                        enableFeedback: true,
+                        backgroundColor: MaterialStatePropertyAll(
+                            Colors.purple.withOpacity(0.1)),
+                        fixedSize:
+                            const MaterialStatePropertyAll(Size(400, 12)),
+                      ),
+                      onPressed: _isSubmitting
+                          ? null
+                          : () async {
+                              setState(() {
+                                _isSubmitting = true;
+                              });
+                              keywords.addAll(
+                                subname.text.toLowerCase().split(' ') +
+                                    stream.text.toLowerCase().split(' ') +
+                                    collegename.toLowerCase().split(' '),
+                              );
+                              if (widget.isquestionpaper) {
+                                keywords.add(year.text);
+                              } else {
+                                keywords.addAll(
+                                  topic.text.toLowerCase().split(' '),
+                                );
+                              }
 
-                  setState(
-                    () async {
-                      subnameError =
-                          _validateField(subname.text, "Subject Name");
-                      yearError = widget.isquestionpaper
-                          ? _validateField(year.text, "Year")
-                          : null;
-                      topicError = !widget.isquestionpaper
-                          ? _validateField(topic.text, "Topic")
-                          : null;
-                      streamError = _validateField(stream.text, "Stream");
-                      if (subnameError == null &&
-                          yearError == null &&
-                          topicError == null &&
-                          streamError == null) {
-                        final user = FirebaseAuth.instance.currentUser;
-                        DocumentSnapshot userDoc = await FirebaseFirestore
-                            .instance
-                            .collection('users')
-                            .doc(user?.uid)
-                            .get();
-                        if (widget.isquestionpaper) {
-                          Map<String, dynamic> dataToAdd = {
-                            "Subject Name": subname.text,
-                            "Year": year.text,
-                            "College Name": collegename,
-                            "Votes": 0,
-                            "User Id": (userDoc.data()
-                                as Map<String, dynamic>)['username'],
-                            "Stream": stream.text,
-                            "Keywords": keywords
-                          };
+                              setState(
+                                () async {
+                                  subnameError = _validateField(
+                                      subname.text, "Subject Name");
+                                  yearError = widget.isquestionpaper
+                                      ? _validateField(year.text, "Year")
+                                      : null;
+                                  topicError = !widget.isquestionpaper
+                                      ? _validateField(topic.text, "Topic")
+                                      : null;
+                                  streamError =
+                                      _validateField(stream.text, "Stream");
+                                  if (subnameError == null &&
+                                      yearError == null &&
+                                      topicError == null &&
+                                      streamError == null) {
+                                    final user =
+                                        FirebaseAuth.instance.currentUser;
+                                    DocumentSnapshot userDoc =
+                                        await FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(user?.uid)
+                                            .get();
+                                    if (widget.isquestionpaper) {
+                                      Map<String, dynamic> dataToAdd = {
+                                        "Subject Name": subname.text,
+                                        "Year": year.text,
+                                        "College Name": collegename,
+                                        "Votes": 0,
+                                        "User Id": (userDoc.data() as Map<
+                                            String, dynamic>)['username'],
+                                        "Stream": stream.text,
+                                        "Keywords": keywords,
+                                        "Verified": false
+                                      };
 
-                          FirebaseFirestore.instance
-                              .collection("Question Papers")
-                              .add(dataToAdd)
-                              .then((addedDocRef) {
-                            String documentId = addedDocRef.id;
-                            final filePath = '/$documentId.pdf';
-                            FirebaseStorage.instance
-                                .ref()
-                                .child(filePath)
-                                .putFile(
-                                  File(file.path!),
-                                )
-                                .then(
-                                  (p0) => ScaffoldMessenger.of(context)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Succesfully added data"),
-                                    ),
-                                  ),
-                                )
-                                .onError(
-                                  (error, stackTrace) =>
+                                      FirebaseFirestore.instance
+                                          .collection("Question Papers")
+                                          .add(dataToAdd)
+                                          .then((addedDocRef) {
+                                        String documentId = addedDocRef.id;
+                                        final filePath = '/$documentId.pdf';
+                                        FirebaseStorage.instance
+                                            .ref()
+                                            .child(filePath)
+                                            .putFile(
+                                              File(file.path!),
+                                            )
+                                            .then(
+                                              (p0) =>
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Succesfully added data"),
+                                                ),
+                                              ),
+                                            )
+                                            .onError(
+                                              (error, stackTrace) =>
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                SnackBar(
+                                                  content:
+                                                      Text("Error: $error"),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              ),
+                                            );
+
+                                        FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(user?.uid)
+                                            .update({
+                                          'QpPosts': FieldValue.arrayUnion(
+                                              [documentId]),
+                                        });
+
+                                        Navigator.of(context).pop();
+                                      }).catchError((error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text("Error: $error"),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      });
+                                    } else {
+                                      Map<String, dynamic> dataToAdd = {
+                                        "College Name": collegename,
+                                        "Votes": 0,
+                                        "Subject Name": subname.text,
+                                        "User Id": (userDoc.data() as Map<
+                                            String, dynamic>)['username'],
+                                        "Stream": stream.text,
+                                        "Topic Name": topic.text,
+                                        "Keywords": keywords,
+                                        "Verified": false
+                                      };
+                                      FirebaseFirestore.instance
+                                          .collection("Notes")
+                                          .add(dataToAdd)
+                                          .then((addedDocRef) {
+                                        String documentId = addedDocRef.id;
+                                        final filePath = '/$documentId.pdf';
+                                        FirebaseStorage.instance
+                                            .ref()
+                                            .child(filePath)
+                                            .putFile(
+                                              File(file.path!),
+                                            )
+                                            .then(
+                                              (p0) =>
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Succesfully added data"),
+                                                ),
+                                              ),
+                                            );
+
+                                        FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(user?.uid)
+                                            .update({
+                                          'NotePosts': FieldValue.arrayUnion(
+                                              [documentId]),
+                                        });
+
+                                        Navigator.of(context).pop();
+                                      }).catchError((error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text("Error: $error"),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      });
+                                    }
+                                  } else {
+                                    if (subnameError != null) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                    SnackBar(
-                                      content: Text("Error: $error"),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  ),
-                                );
+                                        SnackBar(
+                                          content:
+                                              Text("Error: ${subnameError!}"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
 
-                            FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user?.uid)
-                                .update({
-                              'posts': FieldValue.arrayUnion([documentId]),
-                            });
+                                    if (yearError != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text("Error: ${yearError!}"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
 
-                            Navigator.of(context).pop();
-                          }).catchError((error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Error: $error"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          });
-                        } else {
-                          Map<String, dynamic> dataToAdd = {
-                            "College Name": collegename,
-                            "Votes": 0,
-                            "Subject Name": subname.text,
-                            "User Id": (userDoc.data()
-                                as Map<String, dynamic>)['username'],
-                            "Stream": stream.text,
-                            "Topic Name": topic.text,
-                            "Keywords": keywords,
-                            "Verified": false
-                          };
-                          FirebaseFirestore.instance
-                              .collection("Notes")
-                              .add(dataToAdd)
-                              .then((addedDocRef) {
-                            String documentId = addedDocRef.id;
-                            final filePath = '/$documentId.pdf';
-                            FirebaseStorage.instance
-                                .ref()
-                                .child(filePath)
-                                .putFile(
-                                  File(file.path!),
-                                )
-                                .then(
-                                  (p0) => ScaffoldMessenger.of(context)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Succesfully added data"),
-                                    ),
-                                  ),
-                                );
+                                    if (topicError != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text("Error: ${topicError!}"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
 
-                            FirebaseFirestore.instance
-                                .collection('users')
-                                .doc(user?.uid)
-                                .update({
-                              'posts': FieldValue.arrayUnion([documentId]),
-                            });
-
-                            Navigator.of(context).pop();
-                          }).catchError((error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text("Error: $error"),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          });
-                        }
-                      } else {
-                        if (subnameError != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Error: ${subnameError!}"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-
-                        if (yearError != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Error: ${yearError!}"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-
-                        if (topicError != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Error: ${topicError!}"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-
-                        if (streamError != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text("Error: ${streamError!}"),
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-                      }
-                    },
-                  );
-                },
-                child: const Text(
-                  "Submit",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+                                    if (streamError != null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              Text("Error: ${streamError!}"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              );
+                            },
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
             ),
           ],
         ),
