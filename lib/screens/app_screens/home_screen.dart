@@ -21,14 +21,24 @@ class HomeScreen extends StatelessWidget {
               fun: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const MyPosts(),
+                    builder: (context) => const MyPosts(
+                      isfav: false,
+                    ),
                   ),
                 );
               },
             ),
             StylishCard(
               text: "My favourites",
-              fun: () {},
+              fun: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MyPosts(
+                      isfav: true,
+                    ),
+                  ),
+                );
+              },
             ),
             StylishCard(
               text: "upload a question paper",

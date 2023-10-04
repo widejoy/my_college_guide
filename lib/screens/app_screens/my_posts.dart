@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/Widgets/custom_tile.dart';
 
 class MyPosts extends StatefulWidget {
-  const MyPosts({super.key});
+  const MyPosts({super.key, required this.isfav});
 
   @override
   State<MyPosts> createState() => _MyPostsState();
+  final bool isfav;
 }
 
 class _MyPostsState extends State<MyPosts> {
@@ -37,7 +38,7 @@ class _MyPostsState extends State<MyPosts> {
         (element) {
           id = element.id;
 
-          List user = userDoc["QpPosts"];
+          List user = widget.isfav ? userDoc["QpPosts"] : userDoc["favs"];
           return user.contains(id);
         },
       );
@@ -46,7 +47,7 @@ class _MyPostsState extends State<MyPosts> {
       return refdoc.docs.where(
         (element) {
           id = element.id;
-          List user = userDoc["NotePosts"];
+          List user = widget.isfav ? userDoc["NotePosts"] : userDoc["favs"];
           return user.contains(id);
         },
       );
@@ -97,7 +98,7 @@ class _MyPostsState extends State<MyPosts> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Select Post Type",
+                  "Your Contibutions",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
