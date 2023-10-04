@@ -38,7 +38,7 @@ class _MyPostsState extends State<MyPosts> {
         (element) {
           id = element.id;
 
-          List user = widget.isfav ? userDoc["QpPosts"] : userDoc["favs"];
+          List user = widget.isfav ? userDoc["favs"] : userDoc["QpPosts"];
           return user.contains(id);
         },
       );
@@ -47,7 +47,7 @@ class _MyPostsState extends State<MyPosts> {
       return refdoc.docs.where(
         (element) {
           id = element.id;
-          List user = widget.isfav ? userDoc["NotePosts"] : userDoc["favs"];
+          List user = widget.isfav ? userDoc["favs"] : userDoc["NotePosts"];
           return user.contains(id);
         },
       );
@@ -58,9 +58,9 @@ class _MyPostsState extends State<MyPosts> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Your Posts",
-          style: TextStyle(
+        title: Text(
+          !widget.isfav ? "Your Posts" : "Your Favourites",
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -97,9 +97,9 @@ class _MyPostsState extends State<MyPosts> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Your Contibutions",
-                  style: TextStyle(
+                Text(
+                  !widget.isfav ? "Your Contibutions" : "Favorited Material",
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

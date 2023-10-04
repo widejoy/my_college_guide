@@ -5,32 +5,64 @@ class StylishCard extends StatelessWidget {
     super.key,
     required this.text,
     required this.fun,
+    required this.subtitle,
+    required this.icon,
   });
   final String text;
   final VoidCallback fun;
+  final String subtitle;
+  final Icon icon;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: fun,
       child: Container(
+        height: 200,
         width: double.infinity,
-        height: 128,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 221, 128, 237),
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 24.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+        padding: const EdgeInsets.all(32),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF846AFF),
+              Color(0xFF755EE8),
+              Colors.purpleAccent,
+              Colors.amber,
+            ],
           ),
+          borderRadius: BorderRadius.all(
+            Radius.circular(16),
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      text,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    icon
+                  ],
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.white),
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
