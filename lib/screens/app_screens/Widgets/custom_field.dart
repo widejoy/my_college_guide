@@ -12,7 +12,7 @@ TextField customField(TextEditingController cont, String text,
     ),
     decoration: InputDecoration(
       filled: true,
-      fillColor: Colors.purple.withOpacity(0.1),
+      fillColor: const Color.fromARGB(255, 253, 241, 255),
       labelText: text,
       labelStyle: const TextStyle(
         color: Colors.purple,

@@ -42,12 +42,7 @@ class DrawerCustom extends ConsumerWidget {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.purple,
-                          Colors.purpleAccent,
-                        ],
-                      ),
+                      color: Color(0xFF846AFF),
                     ),
                     child: DrawerHeader(
                       padding: const EdgeInsets.all(16),
@@ -65,11 +60,14 @@ class DrawerCustom extends ConsumerWidget {
                           } else {
                             final username = snapshot.data;
 
-                            return Text(
-                              'Welcome! ${username ?? "Guest"}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
+                            return Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                              child: Text(
+                                username!,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                ),
                               ),
                             );
                           }

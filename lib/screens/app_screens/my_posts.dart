@@ -68,14 +68,7 @@ class _MyPostsState extends State<MyPosts> {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.purple,
-                Colors.purpleAccent,
-              ],
-            ),
+            color: Color(0xFF846AFF),
           ),
         ),
         elevation: 0,

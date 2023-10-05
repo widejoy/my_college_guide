@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,11 +25,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   TextEditingController stream = TextEditingController();
   String? subnameError;
   String? yearError;
+  String? fileError;
+
   String? topicError;
   String? streamError;
   bool _isSubmitting = false;
 
-  late PlatformFile file;
+  PlatformFile? file;
   bool pdf = false;
   List<String> keywords = [];
 
@@ -47,14 +51,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.purple,
-                Colors.purpleAccent,
-              ],
-            ),
+            color: Color(0xFF846AFF),
           ),
         ),
         elevation: 0,
@@ -105,7 +102,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       "CUSAT - Cochin University Of Science And Technology",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14, color: Colors.purple),
                     ),
                   ),
                 ),
@@ -117,7 +114,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       "Others",
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 14, color: Colors.purple),
                     ),
                   ),
                 ),
@@ -127,11 +124,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   collegename = value!;
                 });
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color.fromARGB(255, 253, 241, 255),
                 labelText: "Select College",
-                border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                labelStyle: const TextStyle(
+                  color: Colors.purple,
+                  fontSize: 16.0,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      const BorderSide(color: Colors.purple, width: 2.0),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Colors.purple.withOpacity(0.7), width: 1.0),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -175,7 +185,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 Flexible(
                   child: pdf
                       ? Text(
-                          ' ${_truncateFileName(file.name)}',
+                          ' ${_truncateFileName(file!.name)}',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -189,7 +199,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: Colors.purple,
+                            color: Colors.black,
                             fontFamily: 'Montserrat',
                             letterSpacing: 0.5,
                           ),
@@ -217,42 +227,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               setState(() {
                                 _isSubmitting = true;
                               });
-                              keywords.addAll(
-                                subname.text.toLowerCase().split(' ') +
-                                    stream.text.toLowerCase().split(' ') +
-                                    collegename.toLowerCase().split(' '),
-                              );
-                              if (widget.isquestionpaper) {
-                                keywords.add(year.text);
-                              } else {
-                                keywords.addAll(
-                                  topic.text.toLowerCase().split(' '),
-                                );
-                              }
+                              subnameError =
+                                  _validateField(subname.text, "Subject Name");
+                              yearError = widget.isquestionpaper
+                                  ? _validateField(year.text, "Year")
+                                  : null;
+                              topicError = !widget.isquestionpaper
+                                  ? _validateField(topic.text, "Topic")
+                                  : null;
+                              streamError =
+                                  _validateField(stream.text, "Stream");
 
-                              setState(
-                                () async {
-                                  subnameError = _validateField(
-                                      subname.text, "Subject Name");
-                                  yearError = widget.isquestionpaper
-                                      ? _validateField(year.text, "Year")
-                                      : null;
-                                  topicError = !widget.isquestionpaper
-                                      ? _validateField(topic.text, "Topic")
-                                      : null;
-                                  streamError =
-                                      _validateField(stream.text, "Stream");
-                                  if (subnameError == null &&
-                                      yearError == null &&
-                                      topicError == null &&
-                                      streamError == null) {
-                                    final user =
-                                        FirebaseAuth.instance.currentUser;
-                                    DocumentSnapshot userDoc =
-                                        await FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(user?.uid)
-                                            .get();
+                              if (subnameError == null &&
+                                  yearError == null &&
+                                  topicError == null &&
+                                  streamError == null) {
+                                if (file != null) {
+                                  keywords.addAll(
+                                    subname.text.toLowerCase().split(' ') +
+                                        stream.text.toLowerCase().split(' ') +
+                                        collegename.toLowerCase().split(' '),
+                                  );
+                                  if (widget.isquestionpaper) {
+                                    keywords.add(year.text);
+                                  } else {
+                                    keywords.addAll(
+                                      topic.text.toLowerCase().split(' '),
+                                    );
+                                  }
+
+                                  final user =
+                                      FirebaseAuth.instance.currentUser;
+                                  DocumentSnapshot userDoc =
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(user?.uid)
+                                          .get();
+
+                                  try {
                                     if (widget.isquestionpaper) {
                                       Map<String, dynamic> dataToAdd = {
                                         "Subject Name": subname.text,
@@ -266,58 +278,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         "Verified": false
                                       };
 
-                                      FirebaseFirestore.instance
-                                          .collection("Question Papers")
-                                          .add(dataToAdd)
-                                          .then((addedDocRef) {
-                                        String documentId = addedDocRef.id;
-                                        final filePath = '/$documentId.pdf';
-                                        FirebaseStorage.instance
-                                            .ref()
-                                            .child(filePath)
-                                            .putFile(
-                                              File(file.path!),
-                                            )
-                                            .then(
-                                              (p0) =>
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      "Succesfully added data"),
-                                                ),
-                                              ),
-                                            )
-                                            .onError(
-                                              (error, stackTrace) =>
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                SnackBar(
-                                                  content:
-                                                      Text("Error: $error"),
-                                                  backgroundColor: Colors.red,
-                                                ),
-                                              ),
-                                            );
+                                      final addedDocRef =
+                                          await FirebaseFirestore.instance
+                                              .collection("Question Papers")
+                                              .add(dataToAdd);
+                                      String documentId = addedDocRef.id;
+                                      final filePath = '/$documentId.pdf';
+                                      await FirebaseStorage.instance
+                                          .ref()
+                                          .child(filePath)
+                                          .putFile(
+                                            File(file!.path!),
+                                          );
 
-                                        FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(user?.uid)
-                                            .update({
-                                          'QpPosts': FieldValue.arrayUnion(
-                                              [documentId]),
-                                        });
-
-                                        Navigator.of(context).pop();
-                                      }).catchError((error) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text("Error: $error"),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(user?.uid)
+                                          .update({
+                                        'QpPosts':
+                                            FieldValue.arrayUnion([documentId]),
                                       });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text("Successfully added data"),
+                                        ),
+                                      );
                                     } else {
                                       Map<String, dynamic> dataToAdd = {
                                         "College Name": collegename,
@@ -330,100 +318,107 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         "Keywords": keywords,
                                         "Verified": false
                                       };
-                                      FirebaseFirestore.instance
-                                          .collection("Notes")
-                                          .add(dataToAdd)
-                                          .then((addedDocRef) {
-                                        String documentId = addedDocRef.id;
-                                        final filePath = '/$documentId.pdf';
-                                        FirebaseStorage.instance
-                                            .ref()
-                                            .child(filePath)
-                                            .putFile(
-                                              File(file.path!),
-                                            )
-                                            .then(
-                                              (p0) =>
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      "Succesfully added data"),
-                                                ),
-                                              ),
-                                            );
 
-                                        FirebaseFirestore.instance
-                                            .collection('users')
-                                            .doc(user?.uid)
-                                            .update({
-                                          'NotePosts': FieldValue.arrayUnion(
-                                              [documentId]),
-                                        });
+                                      final addedDocRef =
+                                          await FirebaseFirestore.instance
+                                              .collection("Notes")
+                                              .add(dataToAdd);
+                                      String documentId = addedDocRef.id;
+                                      final filePath = '/$documentId.pdf';
+                                      await FirebaseStorage.instance
+                                          .ref()
+                                          .child(filePath)
+                                          .putFile(
+                                            File(file!.path!),
+                                          );
 
-                                        Navigator.of(context).pop();
-                                      }).catchError((error) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text("Error: $error"),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(user?.uid)
+                                          .update({
+                                        'NotePosts':
+                                            FieldValue.arrayUnion([documentId]),
                                       });
-                                    }
-                                  } else {
-                                    if (subnameError != null) {
+
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        SnackBar(
+                                        const SnackBar(
                                           content:
-                                              Text("Error: ${subnameError!}"),
-                                          backgroundColor: Colors.red,
+                                              Text("Successfully added data"),
                                         ),
                                       );
                                     }
 
-                                    if (yearError != null) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text("Error: ${yearError!}"),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-
-                                    if (topicError != null) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content:
-                                              Text("Error: ${topicError!}"),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
-
-                                    if (streamError != null) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content:
-                                              Text("Error: ${streamError!}"),
-                                          backgroundColor: Colors.red,
-                                        ),
-                                      );
-                                    }
+                                    Navigator.of(context).pop();
+                                  } catch (error) {
+                                    setState(() {
+                                      _isSubmitting = false;
+                                    });
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text("Error: $error"),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
                                   }
-                                },
-                              );
+                                } else {
+                                  setState(() {
+                                    _isSubmitting = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Please upload a file"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              } else {
+                                setState(() {
+                                  _isSubmitting = false;
+                                });
+
+                                if (subnameError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: ${subnameError!}"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+
+                                if (yearError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: ${yearError!}"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+
+                                if (topicError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: ${topicError!}"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+
+                                if (streamError != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("Error: ${streamError!}"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
                             },
                       child: const Text(
                         "Submit",
                         style: TextStyle(
+                          color: Colors.purple,
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -438,6 +433,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (value.isEmpty) {
       return "$fieldName is required";
     }
+
     return null;
   }
 

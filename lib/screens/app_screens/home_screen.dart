@@ -61,8 +61,8 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 36,
               ),
-              subtitle: "Upload a Question Paper Here",
-              text: "upload a question paper",
+              subtitle: "Click here to input Question Paper",
+              text: "Upload Question Paper",
               fun: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                 color: Colors.white,
                 size: 36,
               ),
-              subtitle: "Upload Notes Here",
+              subtitle: "Click here to input Notes",
               text: "upload your notes",
               fun: () {
                 Navigator.of(context).push(
