@@ -34,6 +34,10 @@ class _SignupState extends State<Signup> {
     await _firestore.collection('users').doc(userId).set({
       'username': username,
       'email': email,
+      'QpPosts': [],
+      "downvoted": [],
+      "favs": [],
+      "upvoted": []
     });
   }
 
