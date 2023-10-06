@@ -26,8 +26,8 @@ class StylishCard extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF846AFF),
-              Color(0xFF755EE8),
+              Color.fromARGB(255, 0, 136, 255),
+              Color.fromARGB(255, 26, 117, 197),
               Colors.purpleAccent,
               Colors.amber,
             ],

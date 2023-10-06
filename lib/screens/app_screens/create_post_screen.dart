@@ -51,7 +51,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF846AFF),
+            color: Color.fromARGB(255, 0, 136, 255),
           ),
         ),
         elevation: 0,

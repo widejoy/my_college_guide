@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/Widgets/custom_tile.dart';
 
 class MyPosts extends StatefulWidget {
@@ -59,7 +59,7 @@ class _MyPostsState extends State<MyPosts> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          !widget.isfav ? "Your Posts" : "Your Favourites",
+          !widget.isfav ? "Your Posts" : "Your Favorites",
           style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -68,7 +68,7 @@ class _MyPostsState extends State<MyPosts> {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            color: Color(0xFF846AFF),
+            color: Color.fromARGB(255, 0, 136, 255),
           ),
         ),
         elevation: 0,
@@ -91,7 +91,7 @@ class _MyPostsState extends State<MyPosts> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  !widget.isfav ? "Your Contibutions" : "Favorited Material",
+                  !widget.isfav ? "Your Contributions" : "Favorited Material",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -146,40 +146,56 @@ class _MyPostsState extends State<MyPosts> {
               future: _future,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.blueAccent,
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   final ref = snapshot.data ?? [];
-                  return ListView.builder(
-                    itemCount: ref.length,
-                    itemBuilder: (context, index) {
-                      final doc = ref.elementAt(index).data();
-                      return col == "QpPosts"
-                          ? CustomListTile(
-                              isQuestionpaper: true,
-                              isVerified: doc["Verified"],
-                              id: id,
-                              collegeName: doc['College Name'],
-                              subjectName: doc['Subject Name'],
-                              userName: doc['User Id'],
-                              votes: doc['Votes'],
-                              year: doc['Year'],
-                              stream: doc['Stream'],
-                            )
-                          : CustomListTile(
-                              isQuestionpaper: false,
-                              isVerified: doc["Verified"],
-                              id: id,
-                              collegeName: doc['College Name'],
-                              subjectName: doc['Subject Name'],
-                              userName: doc['User Id'],
-                              votes: doc['Votes'],
-                              year: doc['Topic Name'],
-                              stream: doc['Stream'],
-                            );
-                    },
-                  );
+                  if (ref.isEmpty) {
+                    // Handle case when there are no posts available
+                    return Center(
+                      child: Text(
+                        widget.isfav
+                            ? "You haven't favorited any posts yet."
+                            : "You haven't made any posts yet.",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                      itemCount: ref.length,
+                      itemBuilder: (context, index) {
+                        final doc = ref.elementAt(index).data();
+                        return col == "QpPosts"
+                            ? CustomListTile(
+                                isQuestionpaper: true,
+                                isVerified: doc["Verified"],
+                                id: id,
+                                collegeName: doc['College Name'],
+                                subjectName: doc['Subject Name'],
+                                userName: doc['User Id'],
+                                votes: doc['Votes'],
+                                year: doc['Year'],
+                                stream: doc['Stream'],
+                              )
+                            : CustomListTile(
+                                isQuestionpaper: false,
+                                isVerified: doc["Verified"],
+                                id: id,
+                                collegeName: doc['College Name'],
+                                subjectName: doc['Subject Name'],
+                                userName: doc['User Id'],
+                                votes: doc['Votes'],
+                                year: doc['Topic Name'],
+                                stream: doc['Stream'],
+                              );
+                      },
+                    );
+                  }
                 }
               },
             ),

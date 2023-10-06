@@ -127,30 +127,37 @@ class _NotesScreen extends State<NotesScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: searchDatabase.length,
-                itemBuilder: (context, index) {
-                  final doc = searchDatabase[index].data();
-                  return Column(
-                    children: [
-                      CustomListTile(
-                        isQuestionpaper: false,
-                        isVerified: doc["Verified"],
-                        id: id,
-                        collegeName: doc['College Name'],
-                        subjectName: doc['Subject Name'],
-                        userName: doc['User Id'],
-                        votes: doc['Votes'],
-                        year: doc['Topic Name'],
-                        stream: doc['Stream'],
+              child: searchDatabase.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No results found.',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      const SizedBox(
-                        height: 8,
-                      )
-                    ],
-                  );
-                },
-              ),
+                    )
+                  : ListView.builder(
+                      itemCount: searchDatabase.length,
+                      itemBuilder: (context, index) {
+                        final doc = searchDatabase[index].data();
+                        return Column(
+                          children: [
+                            CustomListTile(
+                              isQuestionpaper: false,
+                              isVerified: doc["Verified"],
+                              id: id,
+                              collegeName: doc['College Name'],
+                              subjectName: doc['Subject Name'],
+                              userName: doc['User Id'],
+                              votes: doc['Votes'],
+                              year: doc['Topic Name'],
+                              stream: doc['Stream'],
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            )
+                          ],
+                        );
+                      },
+                    ),
             ),
           ],
         ),

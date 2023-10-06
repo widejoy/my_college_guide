@@ -97,6 +97,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
               hint: const Text('Select College'),
               value: selectedCollege,
               onChanged: (newValue) {
+                updateSearchResults(newValue!);
                 setState(() {
                   selectedCollege = newValue;
                   collegeDropdownEnabled = false;
@@ -127,23 +128,30 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                itemCount: searchDatabase.length,
-                itemBuilder: (context, index) {
-                  final doc = searchDatabase[index].data();
-                  return CustomListTile(
-                    isQuestionpaper: true,
-                    isVerified: doc["Verified"],
-                    id: id,
-                    collegeName: doc['College Name'],
-                    subjectName: doc['Subject Name'],
-                    userName: doc['User Id'],
-                    votes: doc['Votes'],
-                    year: doc['Year'],
-                    stream: doc['Stream'],
-                  );
-                },
-              ),
+              child: searchDatabase.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'No results found.',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: searchDatabase.length,
+                      itemBuilder: (context, index) {
+                        final doc = searchDatabase[index].data();
+                        return CustomListTile(
+                          isQuestionpaper: true,
+                          isVerified: doc["Verified"],
+                          id: id,
+                          collegeName: doc['College Name'],
+                          subjectName: doc['Subject Name'],
+                          userName: doc['User Id'],
+                          votes: doc['Votes'],
+                          year: doc['Year'],
+                          stream: doc['Stream'],
+                        );
+                      },
+                    ),
             ),
           ],
         ),

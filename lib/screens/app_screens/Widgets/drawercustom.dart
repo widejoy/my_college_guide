@@ -42,7 +42,7 @@ class DrawerCustom extends ConsumerWidget {
                 children: [
                   Container(
                     decoration: const BoxDecoration(
-                      color: Color(0xFF846AFF),
+                      color: Color.fromARGB(255, 0, 136, 255),
                     ),
                     child: DrawerHeader(
                       padding: const EdgeInsets.all(16),
