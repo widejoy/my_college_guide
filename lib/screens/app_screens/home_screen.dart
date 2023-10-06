@@ -81,7 +81,7 @@ class HomeScreen extends StatelessWidget {
                 size: 36,
               ),
               subtitle: "Click here to input Notes",
-              text: "upload your notes",
+              text: "Upload  Notes",
               fun: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(

@@ -13,8 +13,6 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreen extends State<NotesScreen> {
-  String? selectedCollege;
-  bool collegeDropdownEnabled = true;
   var searchDatabase = [];
   TextEditingController search = TextEditingController();
   var id = " ";
@@ -91,39 +89,6 @@ class _NotesScreen extends State<NotesScreen> {
               backgroundColor: const MaterialStatePropertyAll(
                 Color.fromARGB(255, 190, 216, 237),
               ),
-            ),
-            const SizedBox(height: 24),
-            DropdownButton<String>(
-              hint: const Text('Select College'),
-              value: selectedCollege,
-              onChanged: (newValue) {
-                setState(() {
-                  selectedCollege = newValue;
-                  collegeDropdownEnabled = false;
-                });
-              },
-              items: [
-                if (collegeDropdownEnabled)
-                  const DropdownMenuItem(
-                    value: '',
-                    child: Text(
-                      'Select College',
-                      style: TextStyle(color: Colors.black38),
-                    ),
-                  ),
-                DropdownMenuItem(
-                  value: 'CUSAT - Cochin University Of Science And Technology',
-                  child: Text(
-                    _truncateFileName(
-                        "CUSAT - Cochin University Of Science And Technology"),
-                    style: const TextStyle(overflow: TextOverflow.ellipsis),
-                  ),
-                ),
-                const DropdownMenuItem(
-                  value: 'Others',
-                  child: Text('Others'),
-                ),
-              ],
             ),
             const SizedBox(height: 16),
             Expanded(

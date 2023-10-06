@@ -92,41 +92,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                 Color.fromARGB(255, 190, 216, 237),
               ),
             ),
-            const SizedBox(height: 24),
-            DropdownButton<String>(
-              hint: const Text('Select College'),
-              value: selectedCollege,
-              onChanged: (newValue) {
-                updateSearchResults(newValue!);
-                setState(() {
-                  selectedCollege = newValue;
-                  collegeDropdownEnabled = false;
-                });
-              },
-              items: [
-                if (collegeDropdownEnabled)
-                  const DropdownMenuItem(
-                    value: '',
-                    child: Text(
-                      'Select College',
-                      style: TextStyle(color: Colors.black38),
-                    ),
-                  ),
-                DropdownMenuItem(
-                  value: 'CUSAT - Cochin University Of Science And Technology',
-                  child: Text(
-                    _truncateFileName(
-                        "CUSAT - Cochin University Of Science And Technology"),
-                    style: const TextStyle(overflow: TextOverflow.ellipsis),
-                  ),
-                ),
-                const DropdownMenuItem(
-                  value: 'Others',
-                  child: Text('Others'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 36),
             Expanded(
               child: searchDatabase.isEmpty
                   ? const Center(

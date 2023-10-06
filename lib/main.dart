@@ -35,11 +35,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: userIsLoggedIn ? const HomeScreen() : const SignIn());
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: userIsLoggedIn ? const HomeScreen() : const SignIn(),
+    );
   }
 
   Future<void> getLoggedInState() async {
