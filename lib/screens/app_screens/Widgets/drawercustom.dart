@@ -14,6 +14,22 @@ class DrawerCustom extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    PageRouteBuilder<dynamic> customPageRouteBuilder(
+      Widget page,
+    ) {
+      return PageRouteBuilder<dynamic>(
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, -1),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            );
+          });
+    }
+
     Future<String?> getUsername() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -79,11 +95,10 @@ class DrawerCustom extends ConsumerWidget {
                     leading: const Icon(Icons.home),
                     title: const Text('Dashboard'),
                     onTap: () {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
+                      Navigator.of(context)
+                          .pushReplacement(customPageRouteBuilder(
+                        const HomeScreen(),
+                      ));
                     },
                   ),
                   ListTile(
@@ -91,8 +106,8 @@ class DrawerCustom extends ConsumerWidget {
                     title: const Text('Previous Year Question Papers'),
                     onTap: () {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const PreviousYearScreen(),
+                        customPageRouteBuilder(
+                          const PreviousYearScreen(),
                         ),
                       );
                     },
@@ -102,8 +117,8 @@ class DrawerCustom extends ConsumerWidget {
                     title: const Text('Notes'),
                     onTap: () {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => const NotesScreen(),
+                        customPageRouteBuilder(
+                          const NotesScreen(),
                         ),
                       );
                     },

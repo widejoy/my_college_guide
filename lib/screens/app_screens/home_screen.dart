@@ -10,6 +10,33 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PageRouteBuilder createPageRoute(Widget page) {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => page,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = 0.0;
+          const end = 1.0;
+          const curve = Curves.easeInOut;
+          var tween = Tween(begin: begin, end: end).chain(
+            CurveTween(curve: curve),
+          );
+
+          var opacityTween = Tween(begin: 0.0, end: 1.0);
+
+          var scaleAnimation = animation.drive(tween);
+          var opacityAnimation = animation.drive(opacityTween);
+
+          return ScaleTransition(
+            scale: scaleAnimation,
+            child: FadeTransition(
+              opacity: opacityAnimation,
+              child: child,
+            ),
+          );
+        },
+      );
+    }
+
     return Scaffold(
       drawer: const DrawerCustom(),
       appBar: const CustomAppBar(title: "Dashboard"),
@@ -27,10 +54,8 @@ class HomeScreen extends StatelessWidget {
               subtitle: "View Your Contributions Here",
               fun: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const MyPosts(
-                      isfav: false,
-                    ),
+                  createPageRoute(
+                    const MyPosts(isfav: false),
                   ),
                 );
               },
@@ -46,10 +71,8 @@ class HomeScreen extends StatelessWidget {
               text: "My favourites",
               fun: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const MyPosts(
-                      isfav: true,
-                    ),
+                  createPageRoute(
+                    const MyPosts(isfav: true),
                   ),
                 );
               },
@@ -65,10 +88,8 @@ class HomeScreen extends StatelessWidget {
               text: "Upload Question Paper",
               fun: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const CreatePostScreen(
-                      isquestionpaper: true,
-                    ),
+                  createPageRoute(
+                    const CreatePostScreen(isquestionpaper: true),
                   ),
                 );
               },
@@ -84,10 +105,8 @@ class HomeScreen extends StatelessWidget {
               text: "Upload  Notes",
               fun: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const CreatePostScreen(isquestionpaper: false);
-                    },
+                  createPageRoute(
+                    const CreatePostScreen(isquestionpaper: false),
                   ),
                 );
               },
