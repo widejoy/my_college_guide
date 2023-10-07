@@ -16,30 +16,52 @@ class _NotesScreen extends State<NotesScreen> {
   var searchDatabase = [];
   TextEditingController search = TextEditingController();
   var id = " ";
+  bool isloading = false;
 
   Future<List<DocumentSnapshot>> performFuzzySearch(String searchText) async {
+    setState(() {
+      isloading = true;
+    });
+
     final querySnapshot =
         await FirebaseFirestore.instance.collection('Notes').get();
 
     final searchResults = querySnapshot.docs.where((doc) {
       final List<String> keywords = List<String>.from(doc["Keywords"] ?? []);
       id = doc.id;
-      final result = extractOne(
-        query: searchText,
-        choices: keywords,
-        cutoff: 10,
-      );
-      if (result.score >= 80) {
-        return true;
+
+      final lowercaseSearchText = searchText.toLowerCase();
+
+      double totalScore = 0.0;
+
+      for (String keyword in keywords) {
+        final lowercaseKeyword = keyword.toLowerCase();
+
+        final result = extractOne(
+          query: lowercaseSearchText,
+          choices: [lowercaseKeyword],
+        );
+
+        final score = result.score;
+        final votes = doc['Votes'] ?? 0;
+
+        final double weightedScore = score + (votes * 0.1) as double;
+        totalScore = weightedScore;
+
+        if (totalScore >= 0.5) {
+          return true;
+        }
       }
       return false;
     }).toList();
 
     searchResults.sort(
-      (a, b) => b['Votes'].compareTo(
-        a['Votes'],
-      ),
+      (a, b) => b['Votes'].compareTo(a['Votes']),
     );
+
+    setState(() {
+      isloading = false;
+    });
 
     return searchResults;
   }
@@ -83,38 +105,41 @@ class _NotesScreen extends State<NotesScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: searchDatabase.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No results found.',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: searchDatabase.length,
-                      itemBuilder: (context, index) {
-                        final doc = searchDatabase[index].data();
-                        return Column(
-                          children: [
-                            CustomListTile(
-                              isQuestionpaper: false,
-                              isVerified: doc["Verified"],
-                              id: id,
-                              collegeName: doc['College Name'],
-                              subjectName: doc['Subject Name'],
-                              userName: doc['User Id'],
-                              votes: doc['Votes'],
-                              year: doc['Topic Name'],
-                              stream: doc['Stream'],
+                child: !isloading
+                    ? searchDatabase.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No results found.',
+                              style: TextStyle(fontSize: 16),
                             ),
-                            const SizedBox(
-                              height: 8,
-                            )
-                          ],
-                        );
-                      },
-                    ),
-            ),
+                          )
+                        : ListView.builder(
+                            itemCount: searchDatabase.length,
+                            itemBuilder: (context, index) {
+                              final doc = searchDatabase[index].data();
+                              return Column(
+                                children: [
+                                  CustomListTile(
+                                    isQuestionpaper: false,
+                                    isVerified: doc["Verified"],
+                                    id: id,
+                                    collegeName: doc['College Name'],
+                                    subjectName: doc['Subject Name'],
+                                    userName: doc['User Id'],
+                                    votes: doc['Votes'],
+                                    year: doc['Topic Name'],
+                                    stream: doc['Stream'],
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  )
+                                ],
+                              );
+                            },
+                          )
+                    : const Center(
+                        child: CircularProgressIndicator(color: Colors.blue),
+                      )),
           ],
         ),
       ),

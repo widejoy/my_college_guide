@@ -132,7 +132,9 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                           },
                         )
                   : const Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                      ),
                     ),
             ),
           ],

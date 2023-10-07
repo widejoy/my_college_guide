@@ -69,6 +69,13 @@ class _StylishCardState extends State<StylishCard>
           width: double.infinity,
           padding: const EdgeInsets.all(32),
           decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(blurRadius: 1),
+              BoxShadow(
+                blurStyle: BlurStyle.solid,
+                blurRadius: 3,
+              ),
+            ],
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
