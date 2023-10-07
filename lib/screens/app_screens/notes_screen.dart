@@ -17,15 +17,6 @@ class _NotesScreen extends State<NotesScreen> {
   TextEditingController search = TextEditingController();
   var id = " ";
 
-  String _truncateFileName(String fileName) {
-    const maxFileNameLength = 35;
-    if (fileName.length <= maxFileNameLength) {
-      return fileName;
-    } else {
-      return '${fileName.substring(0, maxFileNameLength - 3)}...';
-    }
-  }
-
   Future<List<DocumentSnapshot>> performFuzzySearch(String searchText) async {
     final querySnapshot =
         await FirebaseFirestore.instance.collection('Notes').get();

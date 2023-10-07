@@ -1,19 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:project_one/providers/usernameprovider.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
 import 'package:project_one/screens/app_screens/notes_screen.dart';
 import 'package:project_one/screens/app_screens/previousyear_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class DrawerCustom extends ConsumerWidget {
+class DrawerCustom extends StatelessWidget {
   const DrawerCustom({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     PageRouteBuilder<dynamic> customPageRouteBuilder(
       Widget page,
     ) {
@@ -37,9 +35,6 @@ class DrawerCustom extends ConsumerWidget {
             .collection('users')
             .doc(user.uid)
             .get();
-        final String username =
-            (userDoc.data() as Map<String, dynamic>)['username'];
-        ref.read(usernameprov.notifier).getuser(username, user.uid);
 
         if (userDoc.exists) {
           return (userDoc.data() as Map<String, dynamic>)['username'];

@@ -49,11 +49,21 @@ class _SignupState extends State<Signup> {
     return !username.contains(' ');
   }
 
-  bool _validateFields() {
+  Future<bool> _validateFields() async {
     final email = _email.text.trim();
     final password = _password.text;
     final username = _username.text.trim();
+    final data = await _firestore.collection('users').get();
+    for (var i in data.docs) {
+      final check = i["username"];
 
+      if (check == username) {
+        setState(() {
+          _errorText = "Username aleredy taken";
+        });
+        return false;
+      }
+    }
     if (username.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
@@ -163,8 +173,8 @@ class _SignupState extends State<Signup> {
                         ),
                         overlayColor: MaterialStatePropertyAll(Colors.white),
                       ),
-                      onPressed: () {
-                        if (_validateFields()) {
+                      onPressed: () async {
+                        if (await _validateFields()) {
                           FirebaseAuth.instance
                               .createUserWithEmailAndPassword(
                             email: _email.text,
