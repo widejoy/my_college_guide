@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,48 @@ class SignIn extends ConsumerStatefulWidget {
 }
 
 class _SignInState extends ConsumerState<SignIn> {
+  void signin() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _password.text,
+      );
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.emailVerified) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('userLoggedIn', true);
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const HomeScreen(),
+          ),
+        );
+      } else {
+        await user!.sendEmailVerification();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.orange,
+            content: Text(
+              'Please verify your email before logging in. Check your email for a verification link.',
+            ),
+          ),
+        );
+      }
+    } catch (error) {
+      _clearFields();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Error: $error'),
+        ),
+      );
+    } finally {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
   Future<String?> getUsername() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -32,6 +76,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  bool isloading = false;
   Row signupoptions() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -145,6 +190,7 @@ class _SignInState extends ConsumerState<SignIn> {
 
                                 var offsetAnimation = animation.drive(tween);
                                 return SlideTransition(
+                                  transformHitTests: true,
                                   position: offsetAnimation,
                                   child: child,
                                 );
@@ -166,41 +212,26 @@ class _SignInState extends ConsumerState<SignIn> {
                         overlayColor: MaterialStatePropertyAll(Colors.white),
                         textStyle: MaterialStatePropertyAll(
                           TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        FirebaseAuth.instance
-                            .signInWithEmailAndPassword(
-                                email: _email.text, password: _password.text)
-                            .then((value) async {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          prefs.setBool('userLoggedIn', true);
-                          // ignore: use_build_context_synchronously
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute(
-                              builder: (context) => const HomeScreen(),
-                            ),
-                          );
-                        }).onError(
-                          (error, stackTrace) {
-                            _clearFields();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.red,
-                                content: Text('Error: ${error.toString()}'),
-                              ),
-                            );
-                          },
-                        );
+                      onPressed: () async {
+                        if (!isloading) {
+                          setState(() {
+                            isloading = true;
+                          });
+                          signin();
+                        }
                       },
-                      child: const Text(
-                        'Log In',
-                        style: TextStyle(color: Colors.black),
-                      ),
+                      child: !isloading
+                          ? const Text(
+                              'Log In',
+                              style: TextStyle(color: Colors.black),
+                            )
+                          : const CircularProgressIndicator(),
                     ),
                     const SizedBox(
                       height: 16,

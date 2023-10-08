@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +18,53 @@ class _SignupState extends State<Signup> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _passwordretype = TextEditingController();
+  bool isloading = false;
 
   String _errorText = "";
+
+  Future<void> signup() async {
+    setState(() {
+      isloading = true;
+    });
+    if (await _validateFields()) {
+      try {
+        UserCredential authResult =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _email.text,
+          password: _password.text,
+        );
+
+        await authResult.user!.sendEmailVerification();
+
+        createUserProfile(authResult.user!.uid, _username.text, _email.text);
+
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const SignIn(),
+          ),
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+                'Account created. Please check your email for verification.'),
+          ),
+        );
+      } catch (error) {
+        _clearFields();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red,
+            content: Text('Error: ${error.toString()}'),
+          ),
+        );
+      }
+    }
+    setState(() {
+      isloading = false;
+    });
+  }
 
   Future<void> _clearFields() async {
     await Future.delayed(const Duration(milliseconds: 100));
@@ -163,6 +210,7 @@ class _SignupState extends State<Signup> {
                           fontWeight: FontWeight.bold),
                     ),
                     ElevatedButton(
+                      autofocus: true,
                       style: const ButtonStyle(
                         elevation: MaterialStatePropertyAll(10),
                         fixedSize: MaterialStatePropertyAll(
@@ -174,36 +222,16 @@ class _SignupState extends State<Signup> {
                         overlayColor: MaterialStatePropertyAll(Colors.white),
                       ),
                       onPressed: () async {
-                        if (await _validateFields()) {
-                          FirebaseAuth.instance
-                              .createUserWithEmailAndPassword(
-                            email: _email.text,
-                            password: _password.text,
-                          )
-                              .then((authResult) {
-                            createUserProfile(authResult.user!.uid,
-                                _username.text, _email.text);
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const SignIn(),
-                              ),
-                            );
-                          }).catchError((error) {
-                            _clearFields();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.red,
-                                content: Text('Error: ${error.toString()}'),
-                              ),
-                            );
-                          });
-                        }
+                        isloading ? null : await signup();
                       },
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
+                      child: !isloading
+                          ? const Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : const CircularProgressIndicator(),
                     ),
                   ],
                 ),
