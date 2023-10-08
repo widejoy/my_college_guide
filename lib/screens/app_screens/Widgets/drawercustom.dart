@@ -62,9 +62,11 @@ class DrawerCustom extends StatelessWidget {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator(
-                              strokeCap: StrokeCap.round,
-                              color: Colors.lightBlue,
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                strokeCap: StrokeCap.round,
+                                color: Colors.lightBlue,
+                              ),
                             );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
@@ -72,7 +74,7 @@ class DrawerCustom extends StatelessWidget {
                             final username = snapshot.data;
 
                             return Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(0, 45, 0, 0),
                               child: Text(
                                 username!,
                                 style: const TextStyle(

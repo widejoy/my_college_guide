@@ -39,6 +39,10 @@ class _CustomListTileState extends State<CustomListTile> {
   int _voteCount = 0;
   bool isFavorited = false;
 
+  // Add variables to track whether the user has upvoted and downvoted
+  bool hasUpvoted = false;
+  bool hasDownvoted = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,32 +67,41 @@ class _CustomListTileState extends State<CustomListTile> {
           isDown = downvotedPosts.contains(widget.id);
           isFavorited = favoritedPosts.contains(widget.id);
         });
+
+        // Update the hasUpvoted and hasDownvoted variables
+        hasUpvoted = isUp;
+        hasDownvoted = isDown;
+
+        // Set the upvote and downvote icon colors based on the variables
+        if (hasUpvoted) {
+          setState(() {
+            up = const Icon(
+              Icons.thumb_up,
+              color: Colors.blue,
+            );
+          });
+        }
+
+        if (hasDownvoted) {
+          setState(() {
+            down = const Icon(
+              Icons.thumb_down,
+              color: Colors.red,
+            );
+          });
+        }
       });
     }
-    if (isUp) {
+
+    final collectionName = widget.isQuestionpaper ? 'Question Papers' : 'Notes';
+    final docRef =
+        FirebaseFirestore.instance.collection(collectionName).doc(widget.id);
+
+    docRef.get().then((doc) {
       setState(() {
-        up = const Icon(
-          Icons.thumb_up,
-          color: Colors.blue,
-        );
+        _voteCount = doc['Votes'] ?? 0;
       });
-    } else {
-      setState(() {
-        up = const Icon(Icons.thumb_up_alt_outlined);
-      });
-    }
-    if (isDown) {
-      setState(() {
-        down = const Icon(
-          Icons.thumb_down,
-          color: Colors.red,
-        );
-      });
-    } else {
-      setState(() {
-        down = const Icon(Icons.thumb_down_alt_outlined);
-      });
-    }
+    });
   }
 
   void _updateVotes() {
@@ -116,11 +129,11 @@ class _CustomListTileState extends State<CustomListTile> {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;
 
-    if (isUp) {
+    if (hasUpvoted) {
       setState(() {
         up = const Icon(Icons.thumb_up_alt_outlined);
         _voteCount--;
-        isUp = false;
+        hasUpvoted = false;
       });
 
       final userReference =
@@ -134,11 +147,11 @@ class _CustomListTileState extends State<CustomListTile> {
             print('Error removing upvote: $error');
           });
     } else {
-      if (isDown) {
+      if (hasDownvoted) {
         setState(() {
           down = const Icon(Icons.thumb_down_alt_outlined);
           _voteCount++;
-          isDown = false;
+          hasDownvoted = false;
         });
 
         final userReference =
@@ -159,7 +172,7 @@ class _CustomListTileState extends State<CustomListTile> {
           Icons.thumb_up,
           color: Colors.blue,
         );
-        isUp = true;
+        hasUpvoted = true;
       });
 
       final userReference =
@@ -181,11 +194,11 @@ class _CustomListTileState extends State<CustomListTile> {
     final user = FirebaseAuth.instance.currentUser;
     final userid = user?.uid;
 
-    if (isDown) {
+    if (hasDownvoted) {
       setState(() {
         down = const Icon(Icons.thumb_down_alt_outlined);
         _voteCount++;
-        isDown = false;
+        hasDownvoted = false;
       });
 
       final userReference =
@@ -199,11 +212,11 @@ class _CustomListTileState extends State<CustomListTile> {
             print('Error removing downvote: $error');
           });
     } else {
-      if (isUp) {
+      if (hasUpvoted) {
         setState(() {
           up = const Icon(Icons.thumb_up_alt_outlined);
           _voteCount--;
-          isUp = false;
+          hasUpvoted = false;
         });
 
         final userReference =
@@ -224,7 +237,7 @@ class _CustomListTileState extends State<CustomListTile> {
           Icons.thumb_down,
           color: Colors.red,
         );
-        isDown = true;
+        hasDownvoted = true;
       });
 
       final userReference =
@@ -327,6 +340,10 @@ class _CustomListTileState extends State<CustomListTile> {
               ),
             );
           },
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.share_outlined),
         ),
         Positioned(
           top: 8,
