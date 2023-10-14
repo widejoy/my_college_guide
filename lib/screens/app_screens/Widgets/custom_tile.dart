@@ -39,7 +39,6 @@ class _CustomListTileState extends State<CustomListTile> {
   int _voteCount = 0;
   bool isFavorited = false;
 
-  // Add variables to track whether the user has upvoted and downvoted
   bool hasUpvoted = false;
   bool hasDownvoted = false;
 
@@ -99,7 +98,7 @@ class _CustomListTileState extends State<CustomListTile> {
 
     docRef.get().then((doc) {
       setState(() {
-        _voteCount = doc['Votes'] ?? 0;
+        _voteCount = doc['Votes'];
       });
     });
   }
@@ -144,7 +143,11 @@ class _CustomListTileState extends State<CustomListTile> {
           })
           .then((_) {})
           .catchError((error) {
-            print('Error removing upvote: $error');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(' $error'),
+              ),
+            );
           });
     } else {
       if (hasDownvoted) {
@@ -162,7 +165,11 @@ class _CustomListTileState extends State<CustomListTile> {
             })
             .then((_) {})
             .catchError((error) {
-              print('Error removing downvote: $error');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(' $error'),
+                ),
+              );
             });
       }
 
@@ -209,7 +216,11 @@ class _CustomListTileState extends State<CustomListTile> {
           })
           .then((_) {})
           .catchError((error) {
-            print('Error removing downvote: $error');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(' $error'),
+              ),
+            );
           });
     } else {
       if (hasUpvoted) {
@@ -227,7 +238,11 @@ class _CustomListTileState extends State<CustomListTile> {
             })
             .then((_) {})
             .catchError((error) {
-              print('Error removing upvote: $error');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(' $error'),
+                ),
+              );
             });
       }
 
@@ -248,7 +263,11 @@ class _CustomListTileState extends State<CustomListTile> {
           })
           .then((_) {})
           .catchError((error) {
-            print('Error adding downvote: $error');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$error'),
+              ),
+            );
           });
     }
 
@@ -272,7 +291,13 @@ class _CustomListTileState extends State<CustomListTile> {
             'favs': FieldValue.arrayRemove([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$error'),
+              ),
+            );
+          });
     } else {
       setState(() {
         isFavorited = true;
@@ -283,7 +308,13 @@ class _CustomListTileState extends State<CustomListTile> {
             'favs': FieldValue.arrayUnion([widget.id]),
           })
           .then((_) {})
-          .catchError((error) {});
+          .catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('$error'),
+              ),
+            );
+          });
     }
   }
 

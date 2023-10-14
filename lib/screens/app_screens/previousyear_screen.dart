@@ -25,7 +25,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
     });
 
     final querySnapshot =
-        await FirebaseFirestore.instance.collection('Question Papers').get();
+        await FirebaseFirestore.instance.collection('QuestionPapers').get();
 
     final searchResults = querySnapshot.docs.where((doc) {
       final List<String> keywords = List<String>.from(doc["Keywords"] ?? []);
@@ -122,9 +122,9 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                               isQuestionpaper: true,
                               isVerified: doc["Verified"],
                               id: id,
-                              collegeName: doc['College Name'],
-                              subjectName: doc['Subject Name'],
-                              userName: doc['User Id'],
+                              collegeName: doc['CollegeName'],
+                              subjectName: doc['SubjectName'],
+                              userName: doc['UserId'],
                               votes: doc['Votes'],
                               year: doc['Year'],
                               stream: doc['Stream'],

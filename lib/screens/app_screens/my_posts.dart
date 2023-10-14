@@ -33,7 +33,7 @@ class _MyPostsState extends State<MyPosts> {
 
     if (col == "QpPosts") {
       final refdoc =
-          await FirebaseFirestore.instance.collection('Question Papers').get();
+          await FirebaseFirestore.instance.collection('QuestionPapers').get();
       return refdoc.docs.where(
         (element) {
           id = element.id;
@@ -162,7 +162,7 @@ class _MyPostsState extends State<MyPosts> {
                         widget.isfav
                             ? "You haven't favorited any posts yet."
                             : "You haven't made any posts yet.",
-                        style: TextStyle(fontSize: 16),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     );
                   } else {
@@ -175,8 +175,8 @@ class _MyPostsState extends State<MyPosts> {
                                 isQuestionpaper: true,
                                 isVerified: doc["Verified"],
                                 id: id,
-                                collegeName: doc['College Name'],
-                                subjectName: doc['Subject Name'],
+                                collegeName: doc['CollegeName'],
+                                subjectName: doc['SubjectName'],
                                 userName: doc['User Id'],
                                 votes: doc['Votes'],
                                 year: doc['Year'],
@@ -186,11 +186,11 @@ class _MyPostsState extends State<MyPosts> {
                                 isQuestionpaper: false,
                                 isVerified: doc["Verified"],
                                 id: id,
-                                collegeName: doc['College Name'],
-                                subjectName: doc['Subject Name'],
-                                userName: doc['User Id'],
+                                collegeName: doc['CollegeName'],
+                                subjectName: doc['SubjectName'],
+                                userName: doc['UserId'],
                                 votes: doc['Votes'],
-                                year: doc['Topic Name'],
+                                year: doc['TopicName'],
                                 stream: doc['Stream'],
                               );
                       },

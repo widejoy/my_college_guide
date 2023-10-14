@@ -84,7 +84,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              customField(subname, "Subject Name"),
+              customField(subname, "SubjectName"),
               const SizedBox(height: 16),
               widget.isquestionpaper
                   ? customField(year, "Year", isnum: true)
@@ -269,9 +269,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     try {
                                       if (widget.isquestionpaper) {
                                         Map<String, dynamic> dataToAdd = {
-                                          "Subject Name": subname.text,
+                                          "SubjectName": subname.text,
                                           "Year": year.text,
-                                          "College Name": collegename,
+                                          "CollegeName": collegename,
                                           "Votes": 0,
                                           "User Id": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
@@ -282,7 +282,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                                         final addedDocRef =
                                             await FirebaseFirestore.instance
-                                                .collection("Question Papers")
+                                                .collection("QuestionPapers")
                                                 .add(dataToAdd);
                                         String documentId = addedDocRef.id;
                                         final filePath = '/$documentId.pdf';
@@ -310,13 +310,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         );
                                       } else {
                                         Map<String, dynamic> dataToAdd = {
-                                          "College Name": collegename,
+                                          "CollegeName": collegename,
                                           "Votes": 0,
-                                          "Subject Name": subname.text,
-                                          "User Id": (userDoc.data() as Map<
+                                          "SubjectName": subname.text,
+                                          "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
                                           "Stream": stream.text,
-                                          "Topic Name": topic.text,
+                                          "TopicName": topic.text,
                                           "Keywords": keywords,
                                           "Verified": false
                                         };
