@@ -34,25 +34,30 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   List<String> keywords = [];
   List<String> dropbranch = ["CSE", "MECH"];
   List<String> semester = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  Map<String, List<String>> subjects = {
-    "1": ["Calculus", "EP", "EM", "BCE"],
-    "2": ["", ""],
-    "3": ["Maths", "PPL", "DCS", "DCN"],
+  Map<String, Map<String, List<String>>> subjects = {
+    "CSE": {
+      "1": ["Calculus", "EP", "EM", "BCE"],
+      "2": ["", "hello"],
+      "3": ["Maths", "PPL", "DCS", "DCN"],
+    },
+    "MECH": {
+      "1": ["EP", "EM", "BCE"]
+    }
   };
   List<DropdownMenuItem<String>> getBranchesCollectionIds(String data) {
     List<DropdownMenuItem<String>> drops = [];
-    List<String> iter = [];
+    List<String>? iter = [];
     if (data == 'branch') {
       iter = dropbranch;
     } else if (data == 'semester') {
       iter = semester;
     } else {
       setState(() {
-        iter = subjects[semname]!;
+        iter = subjects[branchname]![semname];
       });
     }
 
-    for (String i in iter) {
+    for (String i in iter!) {
       drops.add(
         DropdownMenuItem(
           value: i,
@@ -122,8 +127,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               const SizedBox(height: 24),
               const SizedBox(height: 16),
               widget.isquestionpaper
-                  ? customField(year, "Year", isnum: true)
-                  : customField(topic, "Topic"),
+                  ? customField(year, "Year", isNumeric: true)
+                  : customField(topic, "Topic", isNumeric: false),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: branchname,
@@ -131,6 +136,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onChanged: (value) {
                   setState(() {
                     branchname = value!;
+                    subname = subjects[branchname]![semname]![0];
                   });
                 },
                 decoration: InputDecoration(
@@ -160,6 +166,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 onChanged: (value) {
                   setState(() {
                     semname = value!;
+                    subname = subjects[branchname]![semname]![0];
                   });
                 },
                 decoration: InputDecoration(
