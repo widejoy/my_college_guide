@@ -9,10 +9,11 @@ class CustomListTile extends StatefulWidget {
   final String userName;
   final int votes;
   final String year;
-  final String stream;
   final String id;
   final bool isVerified;
   final bool isQuestionpaper;
+  final String sem;
+  final String branch;
 
   const CustomListTile({
     super.key,
@@ -21,10 +22,11 @@ class CustomListTile extends StatefulWidget {
     required this.userName,
     required this.votes,
     required this.year,
-    required this.stream,
     required this.id,
     required this.isVerified,
     required this.isQuestionpaper,
+    required this.sem,
+    required this.branch,
   });
 
   @override
@@ -326,19 +328,24 @@ class _CustomListTileState extends State<CustomListTile> {
           tileColor: const Color.fromARGB(255, 253, 241, 255),
           visualDensity: VisualDensity.comfortable,
           leading: const Icon(Icons.sticky_note_2),
-          title: Text(
-            'College: ${widget.collegeName}',
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: widget.isQuestionpaper
+              ? Text(
+                  'Subject: ${widget.subjectName} \n Year: ${widget.year}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                )
+              : Text(
+                  'Subject: ${widget.subjectName} \n Topic: ${widget.year}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Subject: ${widget.subjectName}'),
+              const SizedBox(
+                height: 12,
+              ),
+              Text('semester: ${widget.sem}'),
+              Text('branch: ${widget.branch}'),
               Text('Uploaded by: ${widget.userName}'),
-              widget.isQuestionpaper
-                  ? Text('Year: ${widget.year}')
-                  : Text('Topic: ${widget.year}'),
-              Text('Stream: ${widget.stream}'),
             ],
           ),
           trailing: Column(

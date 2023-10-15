@@ -172,6 +172,8 @@ class _MyPostsState extends State<MyPosts> {
                         final doc = ref.elementAt(index).data();
                         return col == "QpPosts"
                             ? CustomListTile(
+                                sem: doc['semester'],
+                                branch: doc['BranchName'],
                                 isQuestionpaper: true,
                                 isVerified: doc["Verified"],
                                 id: id,
@@ -180,9 +182,10 @@ class _MyPostsState extends State<MyPosts> {
                                 userName: doc['User Id'],
                                 votes: doc['Votes'],
                                 year: doc['Year'],
-                                stream: doc['Stream'],
                               )
                             : CustomListTile(
+                                sem: doc['semester'],
+                                branch: doc['BranchName'],
                                 isQuestionpaper: false,
                                 isVerified: doc["Verified"],
                                 id: id,
@@ -191,7 +194,6 @@ class _MyPostsState extends State<MyPosts> {
                                 userName: doc['UserId'],
                                 votes: doc['Votes'],
                                 year: doc['TopicName'],
-                                stream: doc['Stream'],
                               );
                       },
                     );

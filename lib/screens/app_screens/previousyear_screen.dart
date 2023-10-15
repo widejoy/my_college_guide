@@ -132,7 +132,8 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                                     userName: doc['UserId'],
                                     votes: doc['Votes'],
                                     year: doc['Year'],
-                                    stream: doc['Stream'],
+                                    sem: doc['semester'],
+                                    branch: doc['BranchName'],
                                   );
                                 },
                               )
@@ -143,7 +144,8 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                                   return Column(
                                     children: [
                                       CustomListTile(
-                                        stream: "",
+                                        sem: doc['semester'],
+                                        branch: doc['BranchName'],
                                         isQuestionpaper: false,
                                         isVerified: doc["Verified"],
                                         id: id,
