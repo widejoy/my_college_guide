@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
-import 'package:project_one/screens/app_screens/notes_screen.dart';
 import 'package:project_one/screens/app_screens/previousyear_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -104,7 +103,7 @@ class DrawerCustom extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pushReplacement(
                         customPageRouteBuilder(
-                          const PreviousYearScreen(),
+                          const PreviousYearScreen(isquestionpaper: true),
                         ),
                       );
                     },
@@ -115,8 +114,7 @@ class DrawerCustom extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pushReplacement(
                         customPageRouteBuilder(
-                          const NotesScreen(),
-                        ),
+                            const PreviousYearScreen(isquestionpaper: false)),
                       );
                     },
                   ),

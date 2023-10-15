@@ -6,7 +6,9 @@ import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
 import 'package:fuzzywuzzy/fuzzywuzzy.dart';
 
 class PreviousYearScreen extends StatefulWidget {
-  const PreviousYearScreen({super.key});
+  const PreviousYearScreen({super.key, required this.isquestionpaper});
+
+  final bool isquestionpaper;
 
   @override
   State<PreviousYearScreen> createState() => _PreviousYearScreenState();
@@ -24,8 +26,9 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
       isloading = true;
     });
 
-    final querySnapshot =
-        await FirebaseFirestore.instance.collection('QuestionPapers').get();
+    final querySnapshot = widget.isquestionpaper
+        ? await FirebaseFirestore.instance.collection('QuestionPapers').get()
+        : await FirebaseFirestore.instance.collection('Notes').get();
 
     final searchResults = querySnapshot.docs.where((doc) {
       final List<String> keywords = List<String>.from(doc["Keywords"] ?? []);
@@ -78,9 +81,10 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerCustom(),
-      appBar: const CustomAppBar(
-        title: 'Previous Year Question Papers',
-      ),
+      appBar: CustomAppBar(
+          title: widget.isquestionpaper
+              ? 'Previous Year Question Papers'
+              : "Notes"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -106,37 +110,61 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
             ),
             const SizedBox(height: 36),
             Expanded(
-              child: !isloading
-                  ? searchDatabase.isEmpty
-                      ? const Center(
-                          child: Text(
-                            'No results found.',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        )
-                      : ListView.builder(
-                          itemCount: searchDatabase.length,
-                          itemBuilder: (context, index) {
-                            final doc = searchDatabase[index].data();
-                            return CustomListTile(
-                              isQuestionpaper: true,
-                              isVerified: doc["Verified"],
-                              id: id,
-                              collegeName: doc['CollegeName'],
-                              subjectName: doc['SubjectName'],
-                              userName: doc['UserId'],
-                              votes: doc['Votes'],
-                              year: doc['Year'],
-                              stream: doc['Stream'],
-                            );
-                          },
-                        )
-                  : const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.blue,
-                      ),
-                    ),
-            ),
+                child: !isloading
+                    ? searchDatabase.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'No results found.',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          )
+                        : widget.isquestionpaper
+                            ? ListView.builder(
+                                itemCount: searchDatabase.length,
+                                itemBuilder: (context, index) {
+                                  final doc = searchDatabase[index].data();
+                                  return CustomListTile(
+                                    isQuestionpaper: true,
+                                    isVerified: doc["Verified"],
+                                    id: id,
+                                    collegeName: doc['CollegeName'],
+                                    subjectName: doc['SubjectName'],
+                                    userName: doc['UserId'],
+                                    votes: doc['Votes'],
+                                    year: doc['Year'],
+                                    stream: doc['Stream'],
+                                  );
+                                },
+                              )
+                            : ListView.builder(
+                                itemCount: searchDatabase.length,
+                                itemBuilder: (context, index) {
+                                  final doc = searchDatabase[index].data();
+                                  return Column(
+                                    children: [
+                                      CustomListTile(
+                                        stream: "",
+                                        isQuestionpaper: false,
+                                        isVerified: doc["Verified"],
+                                        id: id,
+                                        collegeName: doc['CollegeName'],
+                                        subjectName: doc['SubjectName'],
+                                        userName: doc['UserId'],
+                                        votes: doc['Votes'],
+                                        year: doc['TopicName'],
+                                      ),
+                                      const SizedBox(
+                                        height: 8,
+                                      )
+                                    ],
+                                  );
+                                },
+                              )
+                    : const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.blue,
+                        ),
+                      )),
           ],
         ),
       ),

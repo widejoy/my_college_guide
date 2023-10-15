@@ -23,13 +23,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String branchname = "CSE";
   String semname = "1";
   TextEditingController topic = TextEditingController();
-  TextEditingController stream = TextEditingController();
   String? subnameError;
   String? yearError;
   String? fileError;
 
   String? topicError;
-  String? streamError;
   bool _isSubmitting = false;
 
   PlatformFile? file;
@@ -86,7 +84,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             color: Colors.white,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            !_isSubmitting ? Navigator.of(context).pop() : null;
           },
         ),
       ),
@@ -113,8 +111,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               widget.isquestionpaper
                   ? customField(year, "Year", isnum: true)
                   : customField(topic, "Topic"),
-              const SizedBox(height: 16),
-              customField(stream, "Stream"),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: branchname,
@@ -264,19 +260,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 topicError = !widget.isquestionpaper
                                     ? _validateField(topic.text, "Topic")
                                     : null;
-                                streamError =
-                                    _validateField(stream.text, "Stream");
 
                                 if (subnameError == null &&
                                     yearError == null &&
-                                    topicError == null &&
-                                    streamError == null) {
+                                    topicError == null) {
                                   if (file != null) {
-                                    keywords.addAll(
-                                      subname.text.toLowerCase().split(' ') +
-                                          stream.text.toLowerCase().split(' ') +
-                                          branchname.toLowerCase().split(' '),
-                                    );
+                                    keywords.addAll(subname.text
+                                            .toLowerCase()
+                                            .split(' ') +
+                                        branchname.toLowerCase().split(' ') +
+                                        semname.split(' '));
                                     if (widget.isquestionpaper) {
                                       keywords.add(year.text);
                                     } else {
@@ -347,7 +340,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           "SubjectName": subname.text,
                                           "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
-                                          "Stream": stream.text,
                                           "TopicName": topic.text,
                                           "Keywords": keywords,
                                           "Verified": false
@@ -435,15 +427,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text("Error: ${topicError!}"),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-
-                                  if (streamError != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Error: ${streamError!}"),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
