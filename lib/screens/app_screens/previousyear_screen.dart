@@ -20,14 +20,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
   var searchDatabase = [];
   TextEditingController search = TextEditingController();
   var id = " ";
-  Map<String, List<String>> subjects = {
-    "1": [
-      "Calculus",
-      "Engineering Physics",
-      "Engineering Mechanics",
-      "Basic Civil Engineering"
-    ]
-  };
+
   bool isloading = false;
   Future<List<DocumentSnapshot>> performFuzzySearch(String searchText) async {
     setState(() {

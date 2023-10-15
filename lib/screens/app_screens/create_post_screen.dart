@@ -35,6 +35,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   List<String> keywords = [];
   List<String> dropbranch = ["CSE", "MECH"];
   List<String> semester = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  Map<String, List<String>> subjects = {
+    "1": [
+      "Calculus",
+      "Engineering Physics",
+      "Engineering Mechanics",
+      "Basic Civil Engineering"
+    ]
+  };
   List<DropdownMenuItem<String>> getBranchesCollectionIds(bool isbranch) {
     List<DropdownMenuItem<String>> drops = [];
 
