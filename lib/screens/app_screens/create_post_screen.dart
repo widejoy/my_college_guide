@@ -18,7 +18,6 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  TextEditingController subname = TextEditingController();
   TextEditingController year = TextEditingController();
   String branchname = "CSE";
   String semname = "1";
@@ -26,27 +25,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? subnameError;
   String? yearError;
   String? fileError;
+  String subname = "Calculus";
 
   String? topicError;
   bool _isSubmitting = false;
-
   PlatformFile? file;
   bool pdf = false;
   List<String> keywords = [];
   List<String> dropbranch = ["CSE", "MECH"];
   List<String> semester = ["1", "2", "3", "4", "5", "6", "7", "8"];
   Map<String, List<String>> subjects = {
-    "1": [
-      "Calculus",
-      "Engineering Physics",
-      "Engineering Mechanics",
-      "Basic Civil Engineering"
-    ]
+    "1": ["Calculus", "EP", "EM", "BCE"],
+    "2": ["", ""],
+    "3": ["Maths", "PPL", "DCS", "DCN"],
   };
-  List<DropdownMenuItem<String>> getBranchesCollectionIds(bool isbranch) {
+  List<DropdownMenuItem<String>> getBranchesCollectionIds(String data) {
     List<DropdownMenuItem<String>> drops = [];
+    List<String> iter = [];
+    if (data == 'branch') {
+      iter = dropbranch;
+    } else if (data == 'semester') {
+      iter = semester;
+    } else {
+      setState(() {
+        iter = subjects[semname]!;
+      });
+    }
 
-    for (String i in isbranch ? dropbranch : semester) {
+    for (String i in iter) {
       drops.add(
         DropdownMenuItem(
           value: i,
@@ -114,7 +120,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
               const SizedBox(height: 24),
-              customField(subname, "SubjectName"),
               const SizedBox(height: 16),
               widget.isquestionpaper
                   ? customField(year, "Year", isnum: true)
@@ -122,7 +127,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: branchname,
-                items: getBranchesCollectionIds(true),
+                items: getBranchesCollectionIds('branch'),
                 onChanged: (value) {
                   setState(() {
                     branchname = value!;
@@ -151,7 +156,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: semname,
-                items: getBranchesCollectionIds(false),
+                items: getBranchesCollectionIds('semester'),
                 onChanged: (value) {
                   setState(() {
                     semname = value!;
@@ -161,6 +166,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   filled: true,
                   fillColor: const Color.fromARGB(255, 253, 241, 255),
                   labelText: "Select Semester",
+                  labelStyle: const TextStyle(
+                    color: Colors.purple,
+                    fontSize: 16.0,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.purple, width: 2.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.purple.withOpacity(0.7), width: 1.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: subname,
+                items: getBranchesCollectionIds('subject'),
+                onChanged: (value) {
+                  setState(() {
+                    subname = value!;
+                  });
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 253, 241, 255),
+                  labelText: "Select Subject",
                   labelStyle: const TextStyle(
                     color: Colors.purple,
                     fontSize: 16.0,
@@ -260,8 +294,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 setState(() {
                                   _isSubmitting = true;
                                 });
-                                subnameError = _validateField(
-                                    subname.text, "Subject Name");
                                 yearError = widget.isquestionpaper
                                     ? _validateField(year.text, "Year")
                                     : null;
@@ -273,7 +305,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     yearError == null &&
                                     topicError == null) {
                                   if (file != null) {
-                                    keywords.addAll(subname.text
+                                    keywords.addAll(subname
                                             .toLowerCase()
                                             .split(' ') +
                                         branchname.toLowerCase().split(' ') +
@@ -297,7 +329,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     try {
                                       if (widget.isquestionpaper) {
                                         Map<String, dynamic> dataToAdd = {
-                                          "SubjectName": subname.text,
+                                          "SubjectName": subname,
                                           "Year": year.text,
                                           "CollegeName":
                                               "CUSAT - Cochin University Of Science And Technology",
@@ -345,7 +377,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           "BranchName": branchname,
                                           "semester": semname,
                                           "Votes": 0,
-                                          "SubjectName": subname.text,
+                                          "SubjectName": subname,
                                           "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
                                           "TopicName": topic.text,
