@@ -20,7 +20,8 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   TextEditingController subname = TextEditingController();
   TextEditingController year = TextEditingController();
-  String collegename = "CUSAT - Cochin University Of Science And Technology";
+  String branchname = "CSE";
+  String semname = "1";
   TextEditingController topic = TextEditingController();
   TextEditingController stream = TextEditingController();
   String? subnameError;
@@ -34,6 +35,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   PlatformFile? file;
   bool pdf = false;
   List<String> keywords = [];
+  List<String> dropbranch = ["CSE", "MECH"];
+  List<String> semester = ["1", "2", "3", "4", "5", "6", "7", "8"];
+  List<DropdownMenuItem<String>> getBranchesCollectionIds(bool isbranch) {
+    List<DropdownMenuItem<String>> drops = [];
+
+    for (String i in isbranch ? dropbranch : semester) {
+      drops.add(
+        DropdownMenuItem(
+          value: i,
+          child: SizedBox(
+            width: 200,
+            child: Text(
+              i,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(fontSize: 14, color: Colors.purple),
+            ),
+          ),
+        ),
+      );
+    }
+    return drops;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,43 +117,46 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               customField(stream, "Stream"),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: collegename,
-                items: const [
-                  DropdownMenuItem(
-                    value:
-                        "CUSAT - Cochin University Of Science And Technology",
-                    child: SizedBox(
-                      width: 200,
-                      child: Text(
-                        "CUSAT - Cochin University Of Science And Technology",
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: TextStyle(fontSize: 14, color: Colors.purple),
-                      ),
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: "Others",
-                    child: SizedBox(
-                      width: 200,
-                      child: Text(
-                        "Others",
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                        style: TextStyle(fontSize: 14, color: Colors.purple),
-                      ),
-                    ),
-                  ),
-                ],
+                value: branchname,
+                items: getBranchesCollectionIds(true),
                 onChanged: (value) {
                   setState(() {
-                    collegename = value!;
+                    branchname = value!;
                   });
                 },
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: const Color.fromARGB(255, 253, 241, 255),
-                  labelText: "Select College",
+                  labelText: "Select Branch",
+                  labelStyle: const TextStyle(
+                    color: Colors.purple,
+                    fontSize: 16.0,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.purple, width: 2.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Colors.purple.withOpacity(0.7), width: 1.0),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: semname,
+                items: getBranchesCollectionIds(false),
+                onChanged: (value) {
+                  setState(() {
+                    semname = value!;
+                  });
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 253, 241, 255),
+                  labelText: "Select Semester",
                   labelStyle: const TextStyle(
                     color: Colors.purple,
                     fontSize: 16.0,
@@ -248,7 +275,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     keywords.addAll(
                                       subname.text.toLowerCase().split(' ') +
                                           stream.text.toLowerCase().split(' ') +
-                                          collegename.toLowerCase().split(' '),
+                                          branchname.toLowerCase().split(' '),
                                     );
                                     if (widget.isquestionpaper) {
                                       keywords.add(year.text);
@@ -271,11 +298,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         Map<String, dynamic> dataToAdd = {
                                           "SubjectName": subname.text,
                                           "Year": year.text,
-                                          "CollegeName": collegename,
+                                          "CollegeName":
+                                              "CUSAT - Cochin University Of Science And Technology",
+                                          "BranchName": branchname,
+                                          "semester": semname,
                                           "Votes": 0,
                                           "User Id": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
-                                          "Stream": stream.text,
                                           "Keywords": keywords,
                                           "Verified": false
                                         };
@@ -310,7 +339,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         );
                                       } else {
                                         Map<String, dynamic> dataToAdd = {
-                                          "CollegeName": collegename,
+                                          "CollegeName":
+                                              "CUSAT - Cochin University Of Science And Technology",
+                                          "BranchName": branchname,
+                                          "semester": semname,
                                           "Votes": 0,
                                           "SubjectName": subname.text,
                                           "UserId": (userDoc.data() as Map<
