@@ -39,6 +39,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       "1": ["Calculus", "EP", "EM", "BCE"],
       "2": ["", "hello"],
       "3": ["Maths", "PPL", "DCS", "DCN"],
+      "4": ["Maths"]
     },
     "MECH": {
       "1": ["EP", "EM", "BCE"]
