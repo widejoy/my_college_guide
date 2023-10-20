@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
+import 'package:project_one/screens/app_screens/overseas_screen.dart';
 import 'package:project_one/screens/app_screens/previousyear_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,15 +115,20 @@ class DrawerCustom extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pushReplacement(
                         customPageRouteBuilder(
-                            const PreviousYearScreen(isquestionpaper: false)),
+                          const PreviousYearScreen(isquestionpaper: false),
+                        ),
                       );
                     },
                   ),
                   ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('Settings'),
+                    leading: const Icon(Icons.help_center_outlined),
+                    title: const Text('Overseas Help'),
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const OverseasScreen(),
+                        ),
+                      );
                     },
                   ),
                 ],
