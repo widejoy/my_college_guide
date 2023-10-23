@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/Widgets/appbar_custom.dart';
 import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OverseasScreen extends StatefulWidget {
   const OverseasScreen({super.key});
@@ -27,8 +27,9 @@ class _OverseasScreenState extends State<OverseasScreen> {
       Map<String, dynamic> data = document.data() as Map<String, dynamic>;
       listdata.add(data);
     }
-    print(listdata);
-    isloading = false;
+    setState(() {
+      isloading = false;
+    });
   }
 
   @override
@@ -52,12 +53,29 @@ class _OverseasScreenState extends State<OverseasScreen> {
                 final item = listdata[index];
                 return GestureDetector(
                   onTap: () {
-                    _launchURL(Uri.parse(item['link']));
+                    _launchURL(item['link']);
                   },
-                  child: ListTile(
-                    title: Text(item['data']),
-                    subtitle: Text(item['link']),
-                    tileColor: const Color.fromARGB(255, 253, 241, 255),
+                  child: Card(
+                    elevation: 2,
+                    child: ListTile(
+                      leading: const Icon(Icons.notification_important_outlined,
+                          color: Colors.red),
+                      title: Text(
+                        item['data'],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        item['link'],
+                        style: const TextStyle(
+                          color: Colors.blue, // Make the link text blue
+                        ),
+                      ),
+                      tileColor: const Color.fromARGB(255, 253, 241, 255),
+                      contentPadding:
+                          const EdgeInsets.all(16), // Padding inside the card
+                    ),
                   ),
                 );
               },
@@ -65,11 +83,7 @@ class _OverseasScreenState extends State<OverseasScreen> {
     );
   }
 
-  _launchURL(Uri url) async {
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url);
-    } else {
-      throw 'Could not launch $url';
-    }
+  _launchURL(String url) async {
+    await launchUrlString(url);
   }
 }
