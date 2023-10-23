@@ -92,10 +92,11 @@ class DrawerCustom extends StatelessWidget {
                     leading: const Icon(Icons.home),
                     title: const Text('Dashboard'),
                     onTap: () {
-                      Navigator.of(context)
-                          .pushReplacement(customPageRouteBuilder(
-                        const HomeScreen(),
-                      ));
+                      Navigator.of(context).pushReplacement(
+                        customPageRouteBuilder(
+                          const HomeScreen(),
+                        ),
+                      );
                     },
                   ),
                   ListTile(
