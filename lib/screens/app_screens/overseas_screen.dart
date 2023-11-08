@@ -69,12 +69,11 @@ class _OverseasScreenState extends State<OverseasScreen> {
                       subtitle: Text(
                         item['link'],
                         style: const TextStyle(
-                          color: Colors.blue, // Make the link text blue
+                          color: Colors.blue,
                         ),
                       ),
                       tileColor: const Color.fromARGB(255, 253, 241, 255),
-                      contentPadding:
-                          const EdgeInsets.all(16), // Padding inside the card
+                      contentPadding: const EdgeInsets.all(16),
                     ),
                   ),
                 );

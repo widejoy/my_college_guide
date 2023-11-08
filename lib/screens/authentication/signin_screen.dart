@@ -155,6 +155,8 @@ class _SignInState extends ConsumerState<SignIn> {
                 child: Column(
                   children: [
                     Image.asset(
+                      width: 400,
+                      height: 400,
                       "assets/images/placeholder-image.png",
                       color: Colors.white,
                     ),
