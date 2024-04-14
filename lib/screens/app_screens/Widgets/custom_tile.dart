@@ -94,7 +94,7 @@ class _CustomListTileState extends State<CustomListTile> {
       });
     }
 
-    final collectionName = widget.isQuestionpaper ? 'Question Papers' : 'Notes';
+    final collectionName = widget.isQuestionpaper ? 'QuestionPapers' : 'Notes';
     final docRef =
         FirebaseFirestore.instance.collection(collectionName).doc(widget.id);
 
@@ -106,7 +106,7 @@ class _CustomListTileState extends State<CustomListTile> {
   }
 
   void _updateVotes() {
-    final collectionName = widget.isQuestionpaper ? 'Question Papers' : 'Notes';
+    final collectionName = widget.isQuestionpaper ? 'QuestionPapers' : 'Notes';
     final docRef =
         FirebaseFirestore.instance.collection(collectionName).doc(widget.id);
 
