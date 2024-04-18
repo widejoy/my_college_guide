@@ -172,16 +172,16 @@ class _MyPostsState extends State<MyPosts> {
                         final doc = ref.elementAt(index).data();
                         return col == "QpPosts"
                             ? CustomListTile(
-                                sem: doc['semester'],
-                                branch: doc['BranchName'],
                                 isQuestionpaper: true,
                                 isVerified: doc["Verified"],
                                 id: id,
                                 collegeName: doc['CollegeName'],
                                 subjectName: doc['SubjectName'],
-                                userName: doc['User Id'],
+                                userName: doc['UserId'],
                                 votes: doc['Votes'],
                                 year: doc['Year'],
+                                sem: doc['semester'],
+                                branch: doc['BranchName'],
                               )
                             : CustomListTile(
                                 sem: doc['semester'],

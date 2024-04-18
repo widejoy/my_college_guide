@@ -344,7 +344,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           "BranchName": branchname,
                                           "semester": semname,
                                           "Votes": 0,
-                                          "User Id": (userDoc.data() as Map<
+                                          "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
                                           "Keywords": keywords,
                                           "Verified": false
