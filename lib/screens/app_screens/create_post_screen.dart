@@ -19,63 +19,19 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   TextEditingController year = TextEditingController();
-  String branchname = "CSE";
-  String semname = "1";
+  TextEditingController branchnameController = TextEditingController();
+  TextEditingController semnameController = TextEditingController();
+  TextEditingController subnameController = TextEditingController();
   TextEditingController topic = TextEditingController();
   String? subnameError;
   String? yearError;
   String? fileError;
-  String subname = "Calculus";
 
   String? topicError;
   bool _isSubmitting = false;
   PlatformFile? file;
   bool pdf = false;
   List<String> keywords = [];
-  List<String> dropbranch = ["CSE", "MECH"];
-  List<String> semester = ["1", "2", "3", "4", "5", "6", "7", "8"];
-  Map<String, Map<String, List<String>>> subjects = {
-    "CSE": {
-      "1": ["Calculus", "EP", "EM", "BCE"],
-      "2": ["", "hello"],
-      "3": ["Maths", "PPL", "DCS", "DCN"],
-      "4": ["Maths"]
-    },
-    "MECH": {
-      "1": ["EP", "EM", "BCE"]
-    }
-  };
-  List<DropdownMenuItem<String>> getBranchesCollectionIds(String data) {
-    List<DropdownMenuItem<String>> drops = [];
-    List<String>? iter = [];
-    if (data == 'branch') {
-      iter = dropbranch;
-    } else if (data == 'semester') {
-      iter = semester;
-    } else {
-      setState(() {
-        iter = subjects[branchname]![semname];
-      });
-    }
-
-    for (String i in iter!) {
-      drops.add(
-        DropdownMenuItem(
-          value: i,
-          child: SizedBox(
-            width: 200,
-            child: Text(
-              i,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: const TextStyle(fontSize: 14, color: Colors.purple),
-            ),
-          ),
-        ),
-      );
-    }
-    return drops;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,94 +87,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ? customField(year, "Year", isNumeric: true)
                   : customField(topic, "Topic", isNumeric: false),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: branchname,
-                items: getBranchesCollectionIds('branch'),
-                onChanged: (value) {
-                  setState(() {
-                    branchname = value!;
-                    subname = subjects[branchname]![semname]![0];
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 253, 241, 255),
-                  labelText: "Select Branch",
-                  labelStyle: const TextStyle(
-                    color: Colors.purple,
-                    fontSize: 16.0,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.purple, width: 2.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.purple.withOpacity(0.7), width: 1.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
+              customField(branchnameController, "Branch Name", isNumeric: false),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: semname,
-                items: getBranchesCollectionIds('semester'),
-                onChanged: (value) {
-                  setState(() {
-                    semname = value!;
-                    subname = subjects[branchname]![semname]![0];
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 253, 241, 255),
-                  labelText: "Select Semester",
-                  labelStyle: const TextStyle(
-                    color: Colors.purple,
-                    fontSize: 16.0,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.purple, width: 2.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.purple.withOpacity(0.7), width: 1.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
+              customField(semnameController, "Semester", isNumeric: true),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: subname,
-                items: getBranchesCollectionIds('subject'),
-                onChanged: (value) {
-                  setState(() {
-                    subname = value!;
-                  });
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 253, 241, 255),
-                  labelText: "Select Subject",
-                  labelStyle: const TextStyle(
-                    color: Colors.purple,
-                    fontSize: 16.0,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: Colors.purple, width: 2.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.purple.withOpacity(0.7), width: 1.0),
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-              ),
+              customField(subnameController, "Subject Name", isNumeric: false),
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -250,8 +123,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                     style: const ButtonStyle(
                       enableFeedback: true,
-                      elevation: MaterialStatePropertyAll(24),
-                      surfaceTintColor: MaterialStatePropertyAll(Colors.grey),
+                      elevation: WidgetStatePropertyAll(24),
+                      surfaceTintColor: WidgetStatePropertyAll(Colors.grey),
                     ),
                   ),
                   const SizedBox(
@@ -291,10 +164,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     : OutlinedButton(
                         style: ButtonStyle(
                           enableFeedback: true,
-                          backgroundColor: MaterialStatePropertyAll(
+                          backgroundColor: WidgetStatePropertyAll(
                               Colors.purple.withOpacity(0.1)),
                           fixedSize:
-                              const MaterialStatePropertyAll(Size(400, 12)),
+                              const WidgetStatePropertyAll(Size(400, 12)),
                         ),
                         onPressed: _isSubmitting
                             ? null
@@ -313,11 +186,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     yearError == null &&
                                     topicError == null) {
                                   if (file != null) {
-                                    keywords.addAll(subname
+                                    keywords.addAll(subnameController.text
                                             .toLowerCase()
                                             .split(' ') +
-                                        branchname.toLowerCase().split(' ') +
-                                        semname.split(' '));
+                                        branchnameController.text
+                                            .toLowerCase()
+                                            .split(' ') +
+                                        semnameController.text.split(' '));
                                     if (widget.isquestionpaper) {
                                       keywords.add(year.text);
                                     } else {
@@ -337,12 +212,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     try {
                                       if (widget.isquestionpaper) {
                                         Map<String, dynamic> dataToAdd = {
-                                          "SubjectName": subname,
+                                          "SubjectName":
+                                              subnameController.text,
                                           "Year": year.text,
                                           "CollegeName":
                                               "CUSAT - Cochin University Of Science And Technology",
-                                          "BranchName": branchname,
-                                          "semester": semname,
+                                          "BranchName":
+                                              branchnameController.text,
+                                          "semester": semnameController.text,
                                           "Votes": 0,
                                           "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
@@ -382,10 +259,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         Map<String, dynamic> dataToAdd = {
                                           "CollegeName":
                                               "CUSAT - Cochin University Of Science And Technology",
-                                          "BranchName": branchname,
-                                          "semester": semname,
+                                          "BranchName":
+                                              branchnameController.text,
+                                          "semester": semnameController.text,
                                           "Votes": 0,
-                                          "SubjectName": subname,
+                                          "SubjectName":
+                                              subnameController.text,
                                           "UserId": (userDoc.data() as Map<
                                               String, dynamic>)['username'],
                                           "TopicName": topic.text,
@@ -451,45 +330,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   setState(() {
                                     _isSubmitting = false;
                                   });
-
-                                  if (subnameError != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            Text("Error: ${subnameError!}"),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-
-                                  if (yearError != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Error: ${yearError!}"),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-
-                                  if (topicError != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text("Error: ${topicError!}"),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
                                 }
                               },
                         child: const Text(
-                          "Submit",
+                          'Submit',
                           style: TextStyle(
-                            color: Colors.purple,
-                            fontSize: 18,
-                          ),
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16),
                         ),
                       ),
               ),
+              const SizedBox(height: 8),
             ],
           ),
         ),
@@ -499,18 +351,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   String? _validateField(String value, String fieldName) {
     if (value.isEmpty) {
-      return "$fieldName is required";
+      return "$fieldName cannot be empty";
     }
-
     return null;
   }
 
   String _truncateFileName(String fileName) {
-    const maxFileNameLength = 30;
-    if (fileName.length <= maxFileNameLength) {
-      return fileName;
-    } else {
-      return '${fileName.substring(0, maxFileNameLength - 3)}...';
-    }
+    int maxLength = 30;
+    if (fileName.length <= maxLength) return fileName;
+    int lastDotIndex = fileName.lastIndexOf('.');
+    String extension = lastDotIndex != -1 ? fileName.substring(lastDotIndex) : '';
+    String truncatedFileName = '${fileName.substring(0, maxLength - extension.length)}...$extension';
+    return truncatedFileName;
   }
 }

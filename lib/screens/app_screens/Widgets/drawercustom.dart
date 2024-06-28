@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:project_one/screens/app_screens/ai_feature.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
 import 'package:project_one/screens/app_screens/overseas_screen.dart';
 import 'package:project_one/screens/app_screens/previousyear_screen.dart';
@@ -123,11 +124,21 @@ class DrawerCustom extends StatelessWidget {
                   ),
                   ListTile(
                     leading: const Icon(Icons.help_center_outlined),
-                    title: const Text('Overseas Help'),
+                    title: const Text('Notifications Screen'),
                     onTap: () {
                       Navigator.of(context).pushReplacement(
                         MaterialPageRoute(
                           builder: (context) => const OverseasScreen(),
+                        ),
+                      );
+                    },
+                  ),ListTile(
+                    leading: const Icon(Icons.question_mark),
+                    title: const Text('Repeated Questions'),
+                    onTap: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const AiFeature(),
                         ),
                       );
                     },
