@@ -97,15 +97,15 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                 updateSearchResults(value);
               },
               controller: search,
-              elevation: const MaterialStatePropertyAll(12),
-              hintStyle: const MaterialStatePropertyAll(
+              elevation: const WidgetStatePropertyAll(12),
+              hintStyle: const WidgetStatePropertyAll(
                 TextStyle(
                   overflow: TextOverflow.visible,
                   decorationColor: Colors.amber,
                 ),
               ),
               hintText: 'Search by College/Subject/Year/Stream',
-              backgroundColor: const MaterialStatePropertyAll(
+              backgroundColor: const WidgetStatePropertyAll(
                 Color.fromARGB(255, 190, 216, 237),
               ),
             ),

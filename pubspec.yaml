@@ -46,6 +46,10 @@ dependencies:
   fuzzywuzzy: ^1.1.6
   firebase_dynamic_links: ^5.3.7
   url_launcher: ^6.1.14
+  google_generative_ai: ^0.4.3
+  syncfusion_flutter_pdf: ^26.1.39
+  http: ^1.2.1
+  string_similarity: ^2.0.0
 
 dev_dependencies:
   flutter_test:
