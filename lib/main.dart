@@ -4,9 +4,11 @@ import 'package:project_one/screens/app_screens/home_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
 
   runApp(
