@@ -33,7 +33,7 @@ class _SignupState extends State<Signup> {
           email: _email.text,
           password: _password.text,
         );
-
+        print("hello");
         await authResult.user!.sendEmailVerification();
 
         createUserProfile(authResult.user!.uid, _username.text, _email.text);
@@ -212,14 +212,14 @@ class _SignupState extends State<Signup> {
                     ElevatedButton(
                       autofocus: true,
                       style: const ButtonStyle(
-                        elevation: MaterialStatePropertyAll(10),
-                        fixedSize: MaterialStatePropertyAll(
+                        elevation: WidgetStatePropertyAll(10),
+                        fixedSize: WidgetStatePropertyAll(
                           Size(1000, 50),
                         ),
-                        textStyle: MaterialStatePropertyAll(
+                        textStyle: WidgetStatePropertyAll(
                           TextStyle(color: Colors.black, fontSize: 16),
                         ),
-                        overlayColor: MaterialStatePropertyAll(Colors.white),
+                        overlayColor: WidgetStatePropertyAll(Colors.white),
                       ),
                       onPressed: () async {
                         isloading ? null : await signup();

@@ -1,15 +1,17 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:project_one/screens/app_screens/home_screen.dart';
 import 'package:project_one/screens/authentication/signin_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+ 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp();
+   await Firebase.initializeApp();
+   await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
 
   runApp(
     const ProviderScope(

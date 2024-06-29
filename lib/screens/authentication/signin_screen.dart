@@ -207,12 +207,12 @@ class _SignInState extends ConsumerState<SignIn> {
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
-                        elevation: MaterialStatePropertyAll(10),
-                        fixedSize: MaterialStatePropertyAll(
+                        elevation: WidgetStatePropertyAll(10),
+                        fixedSize: WidgetStatePropertyAll(
                           Size(1000, 50),
                         ),
-                        overlayColor: MaterialStatePropertyAll(Colors.white),
-                        textStyle: MaterialStatePropertyAll(
+                        overlayColor: WidgetStatePropertyAll(Colors.white),
+                        textStyle: WidgetStatePropertyAll(
                           TextStyle(
                             color: Colors.black,
                             fontSize: 16,

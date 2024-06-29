@@ -50,7 +50,7 @@ dependencies:
   syncfusion_flutter_pdf: ^26.1.39
   http: ^1.2.1
   string_similarity: ^2.0.0
-  flutter_dotenv: ^5.1.0
+  firebase_app_check: ^0.2.2+7
 
 dev_dependencies:
   flutter_test:
