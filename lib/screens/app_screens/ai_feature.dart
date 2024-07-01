@@ -8,7 +8,7 @@ import 'package:project_one/screens/app_screens/Widgets/drawercustom.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:http/http.dart' as http;
 import 'package:string_similarity/string_similarity.dart';
-
+import 'package:flutter_html/flutter_html.dart';
 class AiFeature extends StatefulWidget {
   const AiFeature({super.key});
 
@@ -89,8 +89,8 @@ class _AiFeatureState extends State<AiFeature> {
         document.dispose();
       }
 
-      final responses = await GeminiApi.generateText(
-          "This is a set of questions extracted from a question paper: $formattedQuestions. These are the topics which I want to cover: $prompt. Can you please help me find the most repeated questions related to the given topics from the questions given above? Please note that the questions may not be properly formatted since I'm extracting them from a PDF.");
+final responses = await GeminiApi.generateText(
+    "I have a set of questions extracted from a question paper, which may be poorly formatted due to the extraction process. Here are the questions: $formattedQuestions. I need help identifying the most repeated and important questions related to these topics: $prompt. These questions will be displayed in an app, so please provide the key questions organized by parts A abd B and also note that the response should be related to the topics");
 
       setState(() {
         _isLoading = false;
@@ -104,6 +104,7 @@ class _AiFeatureState extends State<AiFeature> {
     }
   }
 
+ @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,7 +139,9 @@ class _AiFeatureState extends State<AiFeature> {
             Center(
               child: ElevatedButton(
                 onPressed: _submit,
-                child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text('Submit'),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Submit'),
               ),
             ),
             const SizedBox(height: 20),
@@ -151,9 +154,20 @@ class _AiFeatureState extends State<AiFeature> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: SingleChildScrollView(
-                    child: Text(
-                      _responseText,
-                      style: const TextStyle(fontSize: 16, color: Colors.black87),
+                    child: Html(
+                      data: _responseText.replaceAllMapped(
+                        RegExp(r'\*\*(.*?)\*\*\##'), // Bold
+                        (match) => '<b>${match[1]}</b>',
+                      ).replaceAllMapped(
+                        RegExp(r'\*(.*?)\*'), // Italics
+                        (match) => '<i>${match[1]}</i>',
+                      ).replaceAll('\n', '<br>'), // New lines
+                      style: {
+                        "body": Style(
+                          fontSize: FontSize(16),
+                          color: Colors.black87,
+                        ),
+                      },
                     ),
                   ),
                 ),
