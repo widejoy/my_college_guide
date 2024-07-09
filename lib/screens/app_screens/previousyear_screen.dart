@@ -17,11 +17,11 @@ class PreviousYearScreen extends StatefulWidget {
 class _PreviousYearScreenState extends State<PreviousYearScreen> {
   String? selectedCollege;
   bool collegeDropdownEnabled = true;
-  var searchDatabase = [];
+  List<DocumentSnapshot> searchDatabase = [];
   TextEditingController search = TextEditingController();
-  var id = " ";
 
   bool isloading = false;
+
   Future<List<DocumentSnapshot>> performFuzzySearch(String searchText) async {
     setState(() {
       isloading = true;
@@ -33,7 +33,6 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
 
     final searchResults = querySnapshot.docs.where((doc) {
       final List<String> keywords = List<String>.from(doc["Keywords"] ?? []);
-      id = doc.id;
 
       final lowercaseSearchText = searchText.toLowerCase();
 
@@ -123,11 +122,11 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                             ? ListView.builder(
                                 itemCount: searchDatabase.length,
                                 itemBuilder: (context, index) {
-                                  final doc = searchDatabase[index].data();
+                                  final doc = searchDatabase[index].data() as Map<String, dynamic>;
                                   return CustomListTile(
                                     isQuestionpaper: true,
                                     isVerified: doc["Verified"],
-                                    id: id,
+                                    id: searchDatabase[index].id,
                                     collegeName: doc['CollegeName'],
                                     subjectName: doc['SubjectName'],
                                     userName: doc['UserId'],
@@ -141,7 +140,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                             : ListView.builder(
                                 itemCount: searchDatabase.length,
                                 itemBuilder: (context, index) {
-                                  final doc = searchDatabase[index].data();
+                                  final doc = searchDatabase[index].data() as Map<String, dynamic>;
                                   return Column(
                                     children: [
                                       CustomListTile(
@@ -149,7 +148,7 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
                                         branch: doc['BranchName'],
                                         isQuestionpaper: false,
                                         isVerified: doc["Verified"],
-                                        id: id,
+                                        id: searchDatabase[index].id,
                                         collegeName: doc['CollegeName'],
                                         subjectName: doc['SubjectName'],
                                         userName: doc['UserId'],

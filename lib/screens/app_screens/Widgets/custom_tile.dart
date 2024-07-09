@@ -47,6 +47,7 @@ class _CustomListTileState extends State<CustomListTile> {
   @override
   void initState() {
     super.initState();
+    print(widget.id);
     _checkUserVotesAndFavorites();
   }
 

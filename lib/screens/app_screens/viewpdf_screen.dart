@@ -10,6 +10,7 @@ class Viewpdf extends StatelessWidget {
   Future<String> _getPdfUrl() async {
     final Reference storageReference =
         FirebaseStorage.instance.ref().child('$id.pdf');
+    
     final String downloadURL = await storageReference.getDownloadURL();
 
     return downloadURL;
