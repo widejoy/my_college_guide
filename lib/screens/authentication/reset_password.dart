@@ -52,14 +52,14 @@ class ResetPass extends StatelessWidget {
                     ),
                     ElevatedButton(
                       style: const ButtonStyle(
-                        elevation: MaterialStatePropertyAll(10),
-                        fixedSize: MaterialStatePropertyAll(
+                        elevation: WidgetStatePropertyAll(10),
+                        fixedSize: WidgetStatePropertyAll(
                           Size(1000, 50),
                         ),
-                        textStyle: MaterialStatePropertyAll(
+                        textStyle: WidgetStatePropertyAll(
                           TextStyle(color: Colors.black, fontSize: 16),
                         ),
-                        overlayColor: MaterialStatePropertyAll(Colors.white),
+                        overlayColor: WidgetStatePropertyAll(Colors.white),
                       ),
                       onPressed: () {
                         FirebaseAuth.instance
