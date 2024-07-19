@@ -75,7 +75,6 @@ class _AiFeatureState extends State<AiFeature> {
 
       for (var doc in matchedDocs) {
         String fileId = doc.id;
-
         Reference ref = FirebaseStorage.instance.ref().child('$fileId.pdf');
         String url = await ref.getDownloadURL();
 
@@ -85,9 +84,17 @@ class _AiFeatureState extends State<AiFeature> {
         PdfDocument document = PdfDocument(inputBytes: bytes);
 
         String extractedText = PdfTextExtractor(document).extractText();
+        
         formattedQuestions = formattedQuestions + formatQuestions(extractedText);
         document.dispose();
       }
+    if (formattedQuestions.isEmpty) {
+      setState(() {
+        _isLoading = false;
+        _responseText = 'The pdf is not of proper quality please try a different subject';
+      });
+      return;
+    }
 
 final responses = await GeminiApi.generateText(
     "I have a set of questions extracted from a question paper, which may be poorly formatted due to the extraction process. Here are the questions: $formattedQuestions. I need help identifying the most repeated and important questions related to these topics: $prompt. These questions will be displayed in an app, so please provide the key questions organized by parts A abd B and also note that the response should be related to the topics");

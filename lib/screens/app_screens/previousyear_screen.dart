@@ -36,8 +36,6 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
 
       final lowercaseSearchText = searchText.toLowerCase();
 
-      double totalScore = 0.0;
-
       for (String keyword in keywords) {
         final lowercaseKeyword = keyword.toLowerCase();
 
@@ -47,12 +45,8 @@ class _PreviousYearScreenState extends State<PreviousYearScreen> {
         );
 
         final score = result.score;
-        final votes = doc['Votes'] ?? 0;
 
-        final double weightedScore = score + (votes * 0.1) as double;
-        totalScore = weightedScore;
-
-        if (totalScore >= 0.5) {
+        if (score >= 50) {
           return true;
         }
       }
